@@ -1,0 +1,224 @@
+
+html {
+  height: 100%;
+}
+
+body {
+    background-color: white;
+    min-height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+.foodplan__bg_grey {
+    background-color: #F5F5F5;
+}
+.foodplan_green {
+    color: #91B93E;
+}
+
+.foodplan__border_green {
+    border-color: #91B93E;
+}
+
+.foodplan_orange {
+    color: #fe9700;
+}
+
+.foodplan__card_borderless {
+    border: none;
+}
+.foodplan__shadow {
+    border: none;
+    box-shadow: 0 0 18px rgb(0 0 0 / 10%);
+}
+
+.foodplan__bg_orange {
+    background-color: #fe9700;
+}
+
+.foodplan__bg_green {
+    background-color: #91B93E;
+}
+
+
+.foodplan__head_bg {
+    background-image: url(img/head-bg.png);
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: contain;
+}
+.foodplan__head_desc {
+    backdrop-filter: saturate(180%) blur(5px);
+    background-color: rgba(255, 255, 255, 0.72);
+}
+.foodplan__mobapp {
+    background-image: url(img/phone.png);
+    background-repeat: no-repeat;
+    background-position: 98% 50%;
+    background-size: contain;
+}
+.foodplan__backButton {
+    position: absolute;
+    left: 2rem;
+    top: 30%;
+    text-decoration: none;
+}
+.foodplan__backButton :hover {
+    color: #91B93E;
+}
+.w-md-50 {
+    width: 50%;
+}
+@media (max-width: 991px) {
+    .mob__container {
+        width: 100% !important;
+    }
+}
+.foodplan__creator {
+    background-image: url(img/avatar.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+@media (min-width: 576px) {
+    .foodplan__backButton1 a::before {
+        content: "\2039  назад";
+    }
+}
+@media (max-width: 576px) {
+    .foodplan__head {
+        width: 100% !important;
+        text-align: center;
+        justify-content: center;
+    }
+    .foodplan__head_bg {
+        background-image: none;
+    }
+    .foodplan__story {
+        max-width: 91vw;
+    }
+}
+@media (max-width: 768px) {
+    .foodplan__mobapp {
+        background-image: none;
+    }
+    .foodplan__mobapp_desc {
+        width: 100% !important;
+        text-align: center;
+        justify-content: center;
+    }
+    .carousel__container {
+        width: 100% !important;
+    }
+    .w-md-50 {
+        width: 100% !important;
+        text-align: center;
+    }
+}
+
+@media (max-width: 992px) {
+    .navbar__sideBtns {
+        display: none;   
+    }
+}
+
+.carousel-item__gradient {
+    background: linear-gradient(180deg, rgba(0,0,0,0.8),  rgba(0,0,0,0),  rgba(0,0,0,0));
+}
+
+.navbar__opacity {
+    backdrop-filter: saturate(180%) blur(20px);
+    background-color: rgba(255, 255, 255, 0.72);
+    border-bottom: 1px solid lightgray;
+}
+
+.carousel__container {
+    width: 75%;
+}
+
+.mob__container {
+    width: 75%;
+}
+
+.carousel__button_prev {
+  width: auto;
+}
+
+.carousel__button_next {
+  width: auto;
+}
+
+@media (max-width: 576px) {
+  .carousel__button_prev {
+    left: -24px;
+  }
+}
+@media (min-width: 577px) {
+  .carousel__button_prev {
+    left: -36px;
+  }
+  .carousel__svg_prev {
+      width: 32px;
+      height: 32px;
+  }
+}
+@media (max-width: 576px) {
+  .carousel__button_next {
+    right: -24px;
+  }
+}
+@media (min-width: 577px) {
+  .carousel__button_next {
+    right: -36px;
+  }
+  .carousel__svg_next {
+      width: 32px;
+      height: 32px;
+  }
+}
+
+.foodplan__tab-item {
+  border-bottom: #91B93E solid 1px;
+}
+
+.foodplan__tab-item .active {
+  border-bottom: #91B93E solid 3px !important;
+}
+
+.order__col {
+    cursor: pointer;
+    position: absolute;
+    height: 820%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+.foodplan__radio:checked ~ label {
+    background-color: #91B93E;
+    opacity: 40%;
+}
+
+.avatar__plus {
+    width: 24px;
+    height: 24px;
+}
+
+.foodplan__Button_noShadow {
+    box-shadow: none;
+}
+
+.nav-item__border {
+    position: relative;
+}
+@media (min-width: 768px) {
+    .nav-item__border:hover:before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        height: 4px;
+        color: #91B93E;
+        background-color: #91B93E;
+    }
+}

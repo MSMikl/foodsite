@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <title>План питания на неделю, меню, рецепты, список покупок. Классическое меню, безуглеводное меню</title>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-light fixed-top navbar__opacity">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                </a>
+                <button class="btn btn-outline-success foodplan_green foodplan__border_green">Войти</button>
+            </div>
+        </nav>
+    </header>
+    <main style="margin-top: calc(2rem + 85px);">
+        <section class="foodplan__head_bg">
+            <div class="container">
+                <div class="d-flex w-50 py-lg-5 foodplan__head">
+                    <div class="d-flex flex-column justify-content-start foodplan__head_desc">
+                        <h1 class="mb-5"><b>Вдохновляем готовить дома!</b></h1>
+                        <h4>Мы планируем домашнее меню.<br>
+                            Вы получаете рецепты + список продуктов.<br>
+                            Больше не нужно думать, что готовить.</h4>
+                        <div class="d-block mt-3">
+                            <button class="btn btn-outline-success foodplan_green foodplan__border_green">Хочу попробовать</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="container my-5">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card mb-1 foodplan__card_borderless">
+                            <img src="img/circle1.png" class="card-img-top" alt="">
+                            <div class="card-body">
+                                <h5 class="card-title"><b>Меню на неделю</b></h5>
+                                <p class="card-text">Итальянская паста, котлеты с пюре или овощное карри - решать вам!
+                                Подстраивайте меню под свои желания.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card mb-1 foodplan__card_borderless">
+                            <img src="img/circle2.png" class="card-img-top" alt="">
+                            <div class="card-body">
+                                <h5 class="card-title"><b>Удобный список продуктов</b></h5>
+                                <p class="card-text">С четким списком вы не возьмете лишнего, будете тратить меньше и сможете чаще покупать лосось и морепродукты.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card mb-1 foodplan__card_borderless">
+                            <img src="img/circle3.png" class="card-img-top" alt="">
+                            <div class="card-body">
+                                <h5 class="card-title"><b>Доставка от ВкусВилл</b></h5>
+                                <p class="card-text">Заказывайте доставку продуктов по вашему списку в 1 клик. Все ингредиенты попадут в корзину ВкусВилл автоматически.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="container my-5">
+                <h1 class="text-center my-4"><b>В каждом меню только хиты</b></h1>
+                <div class="container carousel__container">
+                    <div id="carousel1" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="img/1.jpg" class="d-block w-100" alt="...">
+                                <div class="card-img-overlay text-white text-center carousel-item__gradient">
+                                    <h5><b>Модный и полезный ужин</b></h5>
+                                    <h2><b>Боул с креветками и рисом</b></h2>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img src="img/2.jpg" class="d-block w-100" alt="...">
+                                <div class="card-img-overlay text-white text-center carousel-item__gradient">
+                                    <h5><b>Интересно, просто и супер вкусно</b></h5>
+                                    <h2><b>Тосканский суп с фаршем</b></h2>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img src="img/3.jpg" class="d-block w-100" alt="...">
+                                <div class="card-img-overlay text-white text-center carousel-item__gradient">
+                                    <h5><b>Понятное всей семье, яркое на вкус</b></h5>
+                                    <h2><b>Паприкаш с курицей</b></h2>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img src="img/4.jpg" class="d-block w-100" alt="...">
+                                <div class="card-img-overlay text-white text-center carousel-item__gradient">
+                                    <h5></h5><b>Летнее удовольствие</b></h5>
+                                    <h2><b>Овощной салат с жареным халуми</b></h2>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://foodplan.ru/local/images-for-pages/landing/img/cards/5.jpg" class="d-block w-100"
+                                    alt="...">
+                                <div class="card-img-overlay text-white text-center carousel-item__gradient">
+                                    <h5><b>Который все пекут повторно</b></h5>
+                                    <h2><b>Брауни чизкейк с ягодами</b></h2>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev carousel__button_prev" type="button" data-bs-target="#carousel1"
+                            data-bs-slide="prev">
+                            <span class="foodplan_green" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left-circle carousel__svg_prev"
+                                    viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                        d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z" />
+                                </svg>
+                            </span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next carousel__button_next" type="button" data-bs-target="#carousel1"
+                            data-bs-slide="next">
+                            <span class="foodplan_green" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-right-circle carousel__svg_next"
+                                    viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                        d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+                                </svg>
+                            </span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+        <section>
+            <div class="container my-5">
+                <div class="container mob__container foodplan__mobapp">
+                    <div class="d-flex w-md-50 flex-column align-items-center justify-content-between foodplan__mobapp_desc">
+                        <h1 class="py-5"><b>Пользуйтесь, как вам удобно</b></h1>
+                        <h4>Открывайте меню в мобильном приложении, на компьютере, планшете, или распечатывайте на принтере.</h4>
+                        <h4>Создавайте свою личную коллекцию избранных рецептов.</h4>
+                        <div class="d-block py-5">
+                            <button class="btn btn-outline-success foodplan_green foodplan__border_green me-2 mb-2">Загрузите в App
+                                Store</button>
+                            <button class="btn btn-outline-success foodplan_green foodplan__border_green me-2 mb-2">Загрузите в Google
+                                Play</button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+        <section>
+            <div class="container mb-5">
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <div class="foodplan__creator pounded-pill" style="height: 300px;"></div>
+                        <h5 class="text-center">Марина Амельченко</h5>
+                        <h6 class="text-center">Основатель Foodplan</h6>
+                    </div>
+                    <div class="col-12 col-sm-8">
+                        <h1 class="mb-4">,,</h1>
+                        <h4>Каждую неделю мы создаем меню с любовью и заботой. Поэтому нам доверяют более 30 000 семей.</h4>
+                        <h4>Начните путешествие в мир новых вкусов с нами.</h4>
+                        <h1 style="text-align: end;">,,</h1>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="container mb-5">
+                <h1 class="mb-3 text-center"><strong>Истории наших пользователей</strong></h1>
+                <div class="row">
+                    <div class="card col-12 col-sm-6 col-lg-3 foodplan__card_borderless">
+                        <img src="img/IMG_1899.jpg" alt="" class="foodplan__story">
+                    </div>
+                    <div class="card col-12 col-sm-6 col-lg-3 foodplan__card_borderless">
+                        <img src="img/IMG_1900.jpg" alt="" class="foodplan__story">
+                    </div>
+                    <div class="card col-12 col-sm-6 col-lg-3 foodplan__card_borderless">
+                        <img src="img/IMG_1901.jpg" alt="" class="foodplan__story">
+                    </div>
+                    <div class="card col-12 col-sm-6 col-lg-3 foodplan__card_borderless">
+                        <img src="img/IMG_1902.jpg" alt="" class="foodplan__story">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="container mb-5">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="d-flex flex-row justify-content-between m-1">
+                            <img src="img/union-left.svg" alt="" class="logo1">
+                            <div class="d-flex flex-column align-items-center text-center justify-content-center">
+                                <h5>Выпускник Сбербанк 500 Startups</h5>
+                                <h5>Moscow</h5>
+                            </div>
+                            <img src="img/union-right.svg" alt="" class="logo1">
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="d-flex flex-row justify-content-between m-1">
+                            <img src="img/union-left.svg" alt="" class="logo1">
+                            <div class="d-flex flex-column align-items-center text-center justify-content-center">
+                                <h5>Диплом повара Le Cordon Bleu</h5>
+                                <h5>London</h5>
+                            </div>
+                            <img src="img/union-right.svg" alt="" class="logo1">
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="d-flex flex-row justify-content-between m-1">
+                            <img src="img/union-left.svg" alt="" class="logo1">
+                            <div class="d-flex flex-column align-items-center text-center justify-content-center">
+                                <h5>При поддержке Austrian Angel Investors</h5>
+                                <h5>Vienna</h5>
+                            </div>
+                            <img src="img/union-right.svg" alt="" class="logo1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="footer py-4 mt-5" style="border-top: 1px solid lightgray;">
+        <div class="container d-flex flex-row justify-content-between mb-2">
+            <a href="https://vk.com/devmanorg">
+                <img src="img/vk.png" height="40" width="auto" alt="">
+            </a>
+            <div>
+                <a href="#" class="link-dark mx-1" style="text-decoration: none;"><b>Виды меню</b></a>
+                <a href="#" class="link-dark mx-1" style="text-decoration: none;"><b>Блог</b></a>
+                <a href="#" class="link-dark mx-1" style="text-decoration: none;"><b>Контакты</b></a>
+            </div>
+        </div>
+        <div class="container">
+            <h6 class="link-secondary text-center"><a href="#" class="link-secondary me-2">Политика конфиденциальности</a><a href="#" class="link-secondary">Пользовательское соглашение</a></h6>
+            <h6 class="link-secondary text-center">© Devman 2022. All right reserved.</h6>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
