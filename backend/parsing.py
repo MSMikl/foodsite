@@ -33,8 +33,15 @@ def get_recipe_text(recipe_soup: BeautifulSoup) -> str:
     return ''
 
 
-def get_portion_calories(recipe_soup: BeautifulSoup) -> str:
-    return ''
+def get_portion_calories(recipe_soup: BeautifulSoup) -> float:
+    c1 = 'body article.item-bl.item-about div'
+    c2 = 'div#nae-value-bl div table tr td strong'
+    nutrition_tags = recipe_soup.select(f'{c1} {c2}')
+    portion = nutrition_tags[5].text
+    calories = float(nutrition_tags[6].text.strip(' ккал'))
+    if 'Порции' not in portion:
+        return calories * 2.0
+    return calories
 
 
 def parse_recipe_page(recipe_soup: BeautifulSoup):
