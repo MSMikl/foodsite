@@ -1,10 +1,12 @@
 import email
 from django.contrib.auth import authenticate, login
+from django.db.models import Count, Sum
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView
 
-from backend.models import Type, Allergy, User
+from backend.models import Type, Allergy, User, Recipe, RecipeShow
 
 
 class IndexView(TemplateView):
@@ -74,3 +76,68 @@ class RegisterView(View):
             return render(request, 'lk.html')
         print(user)
         return redirect('/')
+
+
+class RecipeView(View):
+    def get(self, request, *args, **kwargs):
+        # получаем активную подписку
+        order = request.user.orders.filter(
+            start_time__lte=timezone.now(), finish_time__gte=timezone.now()
+            ).first()
+        if not order:
+            return render(request,
+                          template_name='recipe.html',
+                          context={'error': 'Нет активных подписок'})
+
+        eat_times = order.types.count()
+
+        # проверяем лимит рецептов
+        recipes_shown_today = RecipeShow.objects\
+            .filter(user=request.user, date=timezone.now().date())\
+            .aggregate(count=Count('id'), calories=Sum('recipe__calories'))
+        eat_times_remain = eat_times - recipes_shown_today['count']
+        if eat_times_remain < 1:
+            return render(
+                request,
+                template_name='recipe.html',
+                context={'error': 'На сегодня лимит рецептов исчерпан'}
+                )
+        calories_remain = order.calories / order.persons
+        if recipes_shown_today['calories']:
+            calories_remain -= recipes_shown_today['calories']
+
+        # фильтруем по аллергии
+        recipes = Recipe.objects.exclude(allergies__in=order.allergies.all())
+
+        # фильтруем по калориям
+        recipes = recipes.filter(
+            calories__lte=calories_remain / eat_times_remain * 1.2
+            )
+        recipes = recipes.filter(
+            calories__gte=calories_remain / eat_times_remain * 0.8
+            )
+        if not recipes:
+            return render(
+                request,
+                template_name='recipe.html',
+                context={'error': 'Нет подходящих рецептов'}
+            )
+
+        # ищем ни разу не показанные рецепты
+        recipe_never_shown = recipes.exclude(
+            shows__in=RecipeShow.objects.filter(user=request.user)
+        )
+        if recipe_never_shown:
+            recipe = recipe_never_shown
+            print('never', recipe)
+        else:
+            # ищем самый ранний из показанных
+            earliest_show = RecipeShow.objects\
+                .filter(user=request.user, recipe__in=recipes)\
+                .earliest('date')
+            recipe = earliest_show.recipe
+        return render(
+            request,
+            template_name='recipe.html',
+            context={'recipe': recipe}
+        )

@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from backend.views import IndexView, AuthView, LoginView, OrderView, RegisterView
+from backend.views import (
+    IndexView, AuthView, LoginView, OrderView,
+    RegisterView, RecipeView,
+)
 
 urlpatterns = [
     path('', IndexView.as_view()),
@@ -24,4 +27,5 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('order/', OrderView.as_view(), name='order'),
     path('register/', RegisterView.as_view(), name='register'),
+    path('recipe/', RecipeView.as_view(), name='recipe'),
 ]
