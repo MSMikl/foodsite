@@ -66,13 +66,10 @@ class Order(models.Model):
     calories = models.IntegerField('Калории', null=False, blank=False)
     price = models.DecimalField('Цена', null=False, blank=False, decimal_places=0, max_digits=6)
     start_time = models.DateField('Дата начала', auto_now_add=True)
-    lenght = models.IntegerField('Продолжительность подписки в днях', null=False, blank=False)
+    finish_time = models.DateField('Дата окончания', null=False, blank=False)
 
     def __str__(self) -> str:
         return f'Подписка {self.id}'
-
-    def finish_time(self):
-        return self.start_time + datetime.timedelta(days=self.lenght)
 
     class Meta:
         verbose_name = 'Подписка'
