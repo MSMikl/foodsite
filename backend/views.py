@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 
+from backend.models import Type, Allergy
+
 
 class IndexView(TemplateView):
     template_name = "index.html"
@@ -27,3 +29,17 @@ class LoginView(View):
             return render(request, 'lk.html')
 
         return render(request, "auth.html")
+
+
+class OrderView(View):
+    def get(self, request):
+        types = [{
+            'title': type.name,
+            'price': type.price
+        } for type in Type.objects.all()]
+        print(types)
+        allergies = [allergy.name for allergy in Allergy.objects.all()]
+        return render(request, 'order.html', context={
+            'types': types,
+            'allergies': allergies
+        })
