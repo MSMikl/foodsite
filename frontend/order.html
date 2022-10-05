@@ -48,9 +48,9 @@
                         <tr>
                             <th scope="row" class="text-start">Срок</th>
                             <td>
-                                <select class="form-select">
-                                    <option value="0" selected>3 мес.</option>
-                                    <option value="2">12 мес.</option>
+                                <select name="length" class="form-select">
+                                    <option value="3" selected>3 мес.</option>
+                                    <option value="12">12 мес.</option>
                                 </select>
                             </td>
                         </tr>
@@ -58,7 +58,7 @@
                         <tr>
                             <th scope="row" class="text-start">{{type.title}}</th>
                             <td>
-                                <select class="form-select selecttype" onchange="update()">
+                                <select name="{{type.title}}" class="form-select selecttype" onchange="update()">
                                     <option value={{type.price}} selected>&#10004;</option>
                                     <option value="0">&#10008;</option>
                                 </select>
@@ -68,10 +68,10 @@
                         <tr>
                             <th scope="row" class="text-start">Кол-во персон</th>
                             <td>
-                                <select name="select6" class="form-select">
-                                    <option value="0" selected>1</option>
-                                    <option value="1">2</option>
-                                    <option value="2">3</option>
+                                <select name="persons" class="form-select">
+                                    <option value="1" selected>1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
                                 </select>
                             </td>
                         </tr>
@@ -80,9 +80,9 @@
                             <td>
                                 {% for allergy in allergies %}
                                 <div class="form-check d-flex justify-content-start">
-                                    <input class="form-check-input me-1" type="checkbox" value="" name="allergy1">
-                                    <label class="form-check-label" for="allergy1">
-                                        {{allergy}}
+                                    <input class="form-check-input me-1" type="checkbox" value="true" name="{{allergy.title}}">
+                                    <label class="form-check-label" for="{{allergy.title}}">
+                                        {{allergy.title}}
                                     </label>
                                 </div>
                                 {% endfor %}
@@ -90,23 +90,9 @@
                         </tr>
                     </tbody>
                 </table>
-                <button type="submit" id="TableSubmit" class="d-none"></button>
+                {% csrf_token %}
+                <button type="submit" id="TableSubmit" class="btn btn-outline-success foodplan_green foodplan__border_green w-50" formaction="../order/" formmethod="post">Продолжить</button>
                 </form>
-
-                <form class="card d-flex flex-row align-items-baseline mb-5 p-3 foodplan__bg_grey">
-                    <label for="exampleInputPassword1" class="form-label me-2">Промокод</label>
-                    <input type="password" class="form-control me-2" id="password">
-                    <button type="submit" class="btn btn-outline-success foodplan_green foodplan__border_green">Применить</button>
-                </form>
-                <div class="d-flex justify-content-center my-5">
-                    <button type="submit" id="btnContinue"
-                        class="btn btn-outline-success foodplan_green foodplan__border_green w-50">Продолжить</button>
-                    <script>
-                        document.getElementById('btnContinue').addEventListener('click', () => {
-                            document.getElementById('TableSubmit').click()
-                        })
-                    </script>
-                </div>
             </div>
         </section>
     </main>

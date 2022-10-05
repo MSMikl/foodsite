@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import TemplateView
 
@@ -34,12 +34,22 @@ class LoginView(View):
 class OrderView(View):
     def get(self, request):
         types = [{
+            'id': type.id,
             'title': type.name,
             'price': type.price
         } for type in Type.objects.all()]
         print(types)
-        allergies = [allergy.name for allergy in Allergy.objects.all()]
+        allergies = [{
+            'title': allergy.name,
+            'id': allergy.id,
+            } for allergy in Allergy.objects.all()]
         return render(request, 'order.html', context={
             'types': types,
             'allergies': allergies
         })
+
+    def post(self, request):
+        print(request.POST)
+        print(request.user)
+        return redirect('../')
+
