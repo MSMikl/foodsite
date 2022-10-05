@@ -61,22 +61,22 @@
                         <h1 class="mb-4 text-center"><strong>Вход</strong></h1>
                         <div class="mb-3">
                             <label for="exampleInputEmail1" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
+                            <input name="email" type="email" class="form-control" id="email" aria-describedby="emailHelp">
                         </div>
                         <div class="mb-3">
                             <div class="d-flex align-items-center justify-content-between">
                                 <label for="exampleInputPassword1" class="form-label">Пароль</label>
                                 <small><a href="#" class="link-dark foodplan_green">Забыли пароль?</a></small>
                             </div>
-                            <input type="password" class="form-control" id="password">
+                            <input name="password" type="password" class="form-control" id="password">
                         </div>
                         <div class="row mb-3">
                             <div class="col-12 col-sm-6 mt-3">
-                                <button type="submit" formmethod="POST" formaction="../login/"
+                                <button type="submit" formmethod="POST" formaction="{% url 'login' %}"
                                     class="btn w-100 btn-outline-success foodplan_green foodplan__border_green">Войти</button>
                             </div>
                             <div class="col-12 col-sm-6 mt-3 d-flex justify-content-center align-items-center">
-                                <h6>Нет аккаунта? <a href="registration.html" class="link-dark foodplan_green">Зарегистрируйтесь</a></h6>
+                                <h6>Нет аккаунта? <a href="{% url 'register' %}" class="link-dark foodplan_green">Зарегистрируйтесь</a></h6>
                             </div>
                         </div>
                         {% csrf_token %}

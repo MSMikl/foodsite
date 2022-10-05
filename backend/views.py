@@ -1,9 +1,10 @@
+import email
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import TemplateView
 
-from backend.models import Type, Allergy
+from backend.models import Type, Allergy, User
 
 
 class IndexView(TemplateView):
@@ -20,10 +21,11 @@ class LoginView(View):
 
     def post(self, request):
         print(request.POST)
-        username = request.POST['email']
+        email = request.POST['email']
         password = request.POST['password']
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
+        print(user)
         if user:
             login(request, user)
             return render(request, 'lk.html')
@@ -53,3 +55,22 @@ class OrderView(View):
         print(request.user)
         return redirect('../')
 
+
+class RegisterView(View):
+    def get(self, request):
+        return render(request, 'registration.html')
+
+    def post(self, request):
+        email = request.POST['email']
+        password = request.POST['password']
+        name = request.POST['name']
+        if not email or not name or not password:
+            return render(request, 'registration.html', context={
+                'error': 'Пожалуйста, введите имя, email и пароль',
+            })
+        user = User.objects.create_user(email=email, password=password, name=name)
+        if user:
+            login(request, user)
+            return render(request, 'lk.html')
+        print(user)
+        return redirect('/')

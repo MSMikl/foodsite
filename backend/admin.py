@@ -2,6 +2,11 @@ from django.contrib import admin
 from .models import User, Order, Type, Menu, Allergy, Recipe
 
 
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ['__str__', 'email', 'is_active', 'is_staff']
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ['name', 'image', 'calories']

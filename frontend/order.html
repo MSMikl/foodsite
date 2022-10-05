@@ -91,7 +91,7 @@
                     </tbody>
                 </table>
                 {% csrf_token %}
-                <button type="submit" id="TableSubmit" class="btn btn-outline-success foodplan_green foodplan__border_green w-50" formaction="../order/" formmethod="post">Продолжить</button>
+                <button type="submit" id="TableSubmit" class="btn btn-outline-success foodplan_green foodplan__border_green w-50" formaction="{% url 'order' %}" formmethod="post">Продолжить</button>
                 </form>
             </div>
         </section>
