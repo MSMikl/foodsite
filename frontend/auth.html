@@ -72,13 +72,14 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-12 col-sm-6 mt-3">
-                                <button type="submit"
+                                <button type="submit" formmethod="POST" formaction="../login/"
                                     class="btn w-100 btn-outline-success foodplan_green foodplan__border_green">Войти</button>
                             </div>
                             <div class="col-12 col-sm-6 mt-3 d-flex justify-content-center align-items-center">
-                                <h6>Нет аккаунта? <a href="#" class="link-dark foodplan_green">Зарегистрируйтесь</a></h6>
+                                <h6>Нет аккаунта? <a href="registration.html" class="link-dark foodplan_green">Зарегистрируйтесь</a></h6>
                             </div>
                         </div>
+                        {% csrf_token %}
                     </form>
                 </div>
             </div>
