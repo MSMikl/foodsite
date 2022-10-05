@@ -19,6 +19,32 @@ def check_for_page_redirect(response: requests.Response, page):
         raise requests.HTTPError(err_msg)
 
 
+def get_recipe_soup(recipe_url: str) -> BeautifulSoup:
+    response = requests.get(recipe_url)
+    response.raise_for_status()
+    return BeautifulSoup(response.text, 'lxml')
+
+
+def get_recipe_title(recipe_soup: BeautifulSoup) -> str:
+    return recipe_soup.select_one('article.item-bl.item-about div h1').text
+
+
+def get_recipe_text(recipe_soup: BeautifulSoup) -> str:
+    return ''
+
+
+def get_portion_calories(recipe_soup: BeautifulSoup) -> str:
+    return ''
+
+
+def parse_recipe_page(recipe_soup: BeautifulSoup):
+    return {
+        'title': get_recipe_title(recipe_soup),
+        'text': get_recipe_text(recipe_soup),
+        'portion_calories': get_portion_calories(recipe_soup),
+    }
+
+
 def get_one_page_recipe_ids(genre_url: str, page: int) -> list:
     page_url = f'{genre_url}~{page}/'
     response = requests.get(page_url)
@@ -33,7 +59,13 @@ def main():
     recipes_url = 'https://www.povarenok.ru/recipes/'
     random_page = random.choice(range(2, PAGES_QUANTITY))
 
-    print(get_one_page_recipe_ids(recipes_url, random_page))
+    test_page = get_one_page_recipe_ids(recipes_url, random_page)
+
+    print(test_page)
+    print()
+    test_recipe = parse_recipe_page(get_recipe_soup(random.choice(test_page)))
+    print(test_recipe)
+
 
 
 if __name__ == '__main__':
