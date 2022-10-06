@@ -1,5 +1,6 @@
+from datetime import timedelta
 import email
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.db.models import Count, Sum
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -15,12 +16,10 @@ class IndexView(TemplateView):
     template_name = "index.html"
 
 
-class AuthView(TemplateView):
-    template_name = "auth.html"
-
-
-class LoginView(View):
+class AuthView(View):
     def get(self, request, *args, **kwargs):
+        if request.GET.get('logout'):
+            logout(request)
         return render(request, "auth.html")
 
     def post(self, request):
@@ -32,7 +31,7 @@ class LoginView(View):
         print(user)
         if user:
             login(request, user)
-            return render(request, 'lk.html')
+            return redirect('/lk/')
 
         return render(request, "auth.html", context={
             'error': 'Пожалуйста введите корректные логин и пароль'
@@ -59,7 +58,22 @@ class OrderView(View):
     def post(self, request):
         print(request.POST)
         print(request.user)
-        return redirect('../')
+        order = Order(
+            user=request.user,
+            persons=request.POST.get('persons'),
+            calories=1200,
+            price=500,
+            finish_time=timezone.now() + timedelta(days=int(request.POST.get('length'))*30)
+        )
+        order.save()
+        for type in Type.objects.all():
+            if request.POST.get(type.name) != '0':
+                order.types.add(type)
+        for allergy in Allergy.objects.all():
+            if request.POST.get(allergy.name):
+                order.allergies.add(allergy)
+        print(order)
+        return redirect('/lk')
 
 
 class RegisterView(View):
@@ -77,7 +91,7 @@ class RegisterView(View):
         user = User.objects.create_user(email=email, password=password, name=name)
         if user:
             login(request, user)
-            return redirect('lk/')
+            return redirect('/lk/')
         print(user)
         return redirect('/')
 
@@ -146,11 +160,12 @@ class RecipeView(View):
             context={'recipe': recipe}
         )
 
+
 class CabinetView(View):
     def get(self, request):
         if not request.user.id:
             return redirect('/auth/')
-        order = Order.objects.filter(finish_time__gte=timezone.now()).last()
+        order = Order.objects.filter(user__id=request.user.id).filter(finish_time__gte=timezone.now()).last()
         if not order:
             return render(request, 'lk.html')
         context = {

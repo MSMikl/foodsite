@@ -18,7 +18,9 @@
                 <a class="navbar-brand" href="#">
                     <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
-                <button class="btn btn-outline-success foodplan_green foodplan__border_green">Выйти</button>
+                <form>
+                    <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit" formaction="{% url 'auth' %}" name="logout" value="True">Выйти</button>
+                </form>                
             </div>
         </nav>
     </header>
