@@ -1,18 +1,10 @@
 import argparse
 import json
-from logging import PercentStyle
-import pprint
 import random
-from itertools import chain
 from pathlib import Path
-from time import sleep
-from urllib.parse import unquote, urljoin, urlsplit
 
 import requests
 from bs4 import BeautifulSoup
-from pathvalidate import sanitize_filename
-
-PAGES_QUANTITY = 10000
 
 
 def check_for_page_redirect(response: requests.Response, page):
@@ -21,23 +13,38 @@ def check_for_page_redirect(response: requests.Response, page):
         raise requests.HTTPError(err_msg)
 
 
-def get_recipe_soup(recipe_url: str) -> BeautifulSoup:
-    response = requests.get(recipe_url)
-    response.raise_for_status()
-    return BeautifulSoup(response.text, 'lxml')
+def save_pretty_json(data, path: str):
+    json_path = Path(path)
+    json_path.mkdir(parents=True, exist_ok=True)
+    file_path = json_path.joinpath('recipes.json')
+    with open(file_path, 'w', encoding='utf8') as file:
+        file.write(json.dumps(data, indent=4, ensure_ascii=False))
 
 
 def get_recipe_title(recipe_soup: BeautifulSoup) -> str:
-    return recipe_soup.select_one('article.item-bl.item-about div h1').text
+    title_soup = recipe_soup.select_one(
+        'article.item-bl.item-about div h1'
+    )
+    if not title_soup:
+        return None
+    return title_soup.text
 
 
 def get_recipe_ingredients(recipe_soup: BeautifulSoup) -> str:
     c1 = 'article.item-bl.item-about'
     c2 = 'div div.ingredients-bl ul li'
-    return '\n'.join(
+    ingredients_soup = recipe_soup.select(f'{c1} {c2}')
+    if not ingredients_soup:
+        return None
+    ingredients = '\n'.join(
         ' '.join(x.text.replace('\n', '').split())
-        for x in recipe_soup.select(f'{c1} {c2}')
+        for x in ingredients_soup
     )
+    if not ingredients:
+        return None
+    if not ingredients.replace('\n', ''):
+        return None
+    return ingredients
 
 
 def get_recipe_instruction(recipe_soup: BeautifulSoup) -> str:
@@ -49,6 +56,8 @@ def get_recipe_instruction(recipe_soup: BeautifulSoup) -> str:
     )
     if not instruction:
         return None
+    if not instruction.replace('\n', ''):
+        return None
     return instruction
 
 
@@ -56,6 +65,8 @@ def get_portion_calories(recipe_soup: BeautifulSoup) -> float:
     c1 = 'body article.item-bl.item-about div'
     c2 = 'div#nae-value-bl div table tr td strong'
     nutrition_tags = recipe_soup.select(f'{c1} {c2}')
+    if not nutrition_tags:
+        return None
     portion = nutrition_tags[5].text
     calories = float(nutrition_tags[6].text.strip(' ккал'))
     if 'Порции' not in portion:
@@ -64,10 +75,11 @@ def get_portion_calories(recipe_soup: BeautifulSoup) -> float:
 
 
 def get_images_urls(recipe_soup: BeautifulSoup) -> list:
-    images = []
+    def_img = 'https://www.povarenok.ru/images/recipes/1.gif'
     title_img = recipe_soup.select_one('div.m-img img')['src']
-    if title_img == 'https://www.povarenok.ru/images/recipes/1.gif':
+    if title_img == def_img:
         return None
+    images = []
     images.append(title_img)
     c1 = 'body article.item-bl.item-about div'
     c2 = 'ul li.cooking-bl span.cook-img a img'
@@ -78,7 +90,10 @@ def get_images_urls(recipe_soup: BeautifulSoup) -> list:
     return images
 
 
-def parse_recipe_page(recipe_soup: BeautifulSoup):
+def parse_recipe_page(recipe_url: str):
+    response = requests.get(recipe_url)
+    response.raise_for_status()
+    recipe_soup = BeautifulSoup(response.text, 'lxml')
     parsed_recipe = {
         'title': get_recipe_title(recipe_soup),
         'ingredients': get_recipe_ingredients(recipe_soup),
@@ -91,8 +106,9 @@ def parse_recipe_page(recipe_soup: BeautifulSoup):
     return parsed_recipe
 
 
-def get_one_page_recipe_ids(genre_url: str, page: int) -> list:
-    page_url = f'{genre_url}~{page}/'
+def get_recipe_urls(page: int) -> list:
+    recipes_url = 'https://www.povarenok.ru/recipes/'
+    page_url = f'{recipes_url}~{page}/'
     response = requests.get(page_url)
     response.raise_for_status()
     check_for_page_redirect(response, page)
@@ -101,19 +117,36 @@ def get_one_page_recipe_ids(genre_url: str, page: int) -> list:
             for book in soup.select('body article.item-bl')]
 
 
-def main():
-    recipes_url = 'https://www.povarenok.ru/recipes/'
-    random_page = random.choice(range(2, PAGES_QUANTITY))
-
-    test_page = get_one_page_recipe_ids(recipes_url, random_page)
-
-    print()
-    test_recipe = parse_recipe_page(
-        get_recipe_soup(
-            random.choice(test_page)
-        )
+def get_parsed_recipes(number: int) -> list:
+    START_PAGE = 2  # to avoid redirect
+    PAGES_QUANTITY = 10000
+    RECIPES_IN_ONE_PAGE = 15
+    number_of_pages = int(number / RECIPES_IN_ONE_PAGE) + 1
+    random_pages = random.sample(
+        population=range(START_PAGE, PAGES_QUANTITY),
+        k=number_of_pages
     )
-    pprint.pprint(test_recipe)
+    parsed_recipes = []
+    for page in random_pages:
+        for url in get_recipe_urls(page):
+            if len(parsed_recipes) >= number:
+                break
+            parsed_recipe = parse_recipe_page(url)
+            if not parsed_recipe:
+                continue
+            parsed_recipes.append(parsed_recipe)
+    return parsed_recipes
+
+
+def save_recipes(number: int):
+    save_pretty_json(get_parsed_recipes(number), 'frontend')
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--number', type=int, default=20)
+    args = parser.parse_args()
+    save_recipes(args.number)
 
 
 if __name__ == '__main__':
