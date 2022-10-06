@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
@@ -13,7 +14,7 @@
 
 <body>
     <header>
-        {% include "Header.html" %}
+        {% include "./header.html" %}
     </header>
     <main style="margin-top: calc(2rem + 85px);">
         <section>
@@ -68,11 +69,11 @@
         <nav class="navbar navbar-expand-md navbar-light mt-5">
             <div class="container p-2">
                 <a class="navbar-brand" href="#">
-                    <img src="img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <div class="footer__sideBtns d-flex">
                     <a href="#">
-                        <img src="img/vk.png" height="38" width="auto" alt="">
+                        <img src="{% static 'img/vk.png' %}" height="38" width="auto" alt="">
                     </a>
                 </div>
             </div>

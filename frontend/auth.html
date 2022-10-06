@@ -12,7 +12,7 @@
 </head>
 <body>
     <header>
-        {% include "Header.html" %}
+        {% include "./header.html" %}
     </header>
     <main style="margin-top: calc(2rem + 85px);">
         <section>
@@ -46,7 +46,7 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-12 col-sm-6 mt-3">
-                                <button type="submit" formmethod="POST" formaction="{% url 'login' %}"
+                                <button type="submit" formmethod="POST" formaction="{% url 'auth' %}"
                                     class="btn w-100 btn-outline-success foodplan_green foodplan__border_green">Войти</button>
                             </div>
                             <div class="col-12 col-sm-6 mt-3 d-flex justify-content-center align-items-center">
@@ -63,11 +63,11 @@
         <nav class="navbar navbar-expand-md navbar-light mt-5">
             <div class="container p-2">
                 <a class="navbar-brand" href="#">
-                    <img src="img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <div class="footer__sideBtns d-flex">
                     <a href="#">
-                        <img src="img/vk.png" height="38" width="auto" alt="">
+                        <img src="{% static 'img/vk.png' %}" height="38" width="auto" alt="">
                     </a>
                 </div>
             </div>

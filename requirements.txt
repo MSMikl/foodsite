@@ -1,6 +1,9 @@
 Django==4.1.2
 environs==9.5.0
 Pillow==9.2.0
+gunicorn
+psycopg2
+dj-database-url
 beautifulsoup4~=4.11.1
 lxml~=4.9.1
 requests~=2.28.1
