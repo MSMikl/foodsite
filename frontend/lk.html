@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
@@ -7,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
     <title>Foodplan 2021 - Меню на неделю FOODPLAN</title>
 </head>
 <body>
@@ -15,7 +16,7 @@
         <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
             <div class="container">
                 <a class="navbar-brand" href="#">
-                    <img src="img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <button class="btn btn-outline-success foodplan_green foodplan__border_green">Выйти</button>
             </div>
@@ -38,7 +39,7 @@
                             <span class="badge rounded-circle position-absolute bottom-0 end-0 foodplan__bg_green avatar__plus"><a href="#"
                                     class="link-dark text-decoration-none align-middle">+</a></span>
                         </div>
-                        <h3 class="card-title text-center">Tim</h3>
+                        <h3 class="card-title text-center">{{user.name}}</h3>
                         <div class="d-block">
                             <button class="btn btn-outline-success foodplan_green foodplan__border_green">Выйти</button>
                         </div>
@@ -90,38 +91,46 @@
                                 <div class="tab-pane fade" id="menu">
                                     <div class="row">
                                         <div class="col-2">
-                                            <img src="img/circle1.png" alt="" class="w-100">
+                                            <img src="{% static 'img/circle1.png' %}" alt="" class="w-100">
                                         </div>
-                                        <div class="col-10 col-md-10">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <h2>Название подписки</h2>
-                                                </div>
-                                                <div class="col-md-12 col-lg-9">
-                                                    <h6>Описание подписки Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius saepe ea nobis necessitatibus
-                                                        consectetur rem! Eligendi assumenda facere sint quibusdam dolorem quasi doloribus nemo, temporibus molestiae
-                                                        distinctio cum laboriosam sed. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius saepe ea nobis
-                                                        necessitatibus consectetur rem! Eligendi
-                                                        assumenda facere sint quibusdam dolorem quasi doloribus nemo, temporibus molestiae distinctio cum laboriosam
-                                                        sed.</h6>
-                                                </div>
-                                                <div class="col-md-12 col-lg-3 text-muted d-flex flex-column justify-content-between">
-                                                    <div class="d-flex flex-row justify-content-between">
-                                                        <small>Персоны: </small><small>3</small>
+                                        {% if types %}
+                                            <div class="col-10 col-md-10">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <h2>Подписка до {{finish_time}}</h2>
                                                     </div>
-                                                    <div class="d-flex flex-row justify-content-between">
-                                                        <small>Аллергии: </small><small>нет</small>
+                                                    <div class="col-md-12 col-lg-9">
+                                                        <h6>
+                                                            Вам доступны следующие приемы пищи:
+                                                            {% for type in types %}
+                                                                <h6>{{type}}</h6>
+                                                            {% endfor %}
+                                                        </h6>
                                                     </div>
-                                                    <div class="d-flex flex-row justify-content-between">
-                                                        <small>Калории: </small><small>1400</small>
+                                                    <div class="col-md-12 col-lg-3 text-muted d-flex flex-column justify-content-between">
+                                                        <div class="d-flex flex-row justify-content-between">
+                                                            <small>Персоны: </small><small>{{persons}}</small>
+                                                        </div>
+                                                        <div class="d-flex flex-row justify-content-between">
+                                                            <small>Аллергии: </small>
+                                                            {% for allergy in allergies %}
+                                                                <small>{{allergy}}</small>
+                                                            {% endfor %}
+                                                        </div>
+                                                        <div class="d-flex flex-row justify-content-between">
+                                                            <small>Калории: </small><small>{{calories}}</small>
+                                                        </div>
+                                                        <div class="d-flex flex-row justify-content-between">
+                                                            <small>Кол-во приёмов пищи: </small><small>{{types|length}}</small>
+                                                        </div>                                                        
                                                     </div>
-                                                    <div class="d-flex flex-row justify-content-between">
-                                                        <small>Кол-во приёмов пищи: </small><small>4</small>
-                                                    </div>
-                                                    
                                                 </div>
                                             </div>
-                                        </div>
+                                        {% else %}
+                                            <div class="col-12">
+                                                <h2>У вас пока нет активных подписок</h2>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -135,11 +144,11 @@
         <nav class="navbar navbar-expand-md navbar-light mt-5">
             <div class="container p-2">
                 <a class="navbar-brand" href="#">
-                    <img src="img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <div class="footer__sideBtns d-flex">
                     <a href="#">
-                        <img src="img/vk.png" height="38" width="auto" alt="">
+                        <img src="{% static 'img/vk.png' %}" height="38" width="auto" alt="">
                     </a>
                 </div>
             </div>

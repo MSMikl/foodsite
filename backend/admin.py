@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import User, Order, Type, Menu, Allergy, Recipe
+from .models import User, Order, Type, Menu, Allergy, Recipe, RecipeShow
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ['__str__', 'email', 'is_active', 'is_staff']
 
 
 @admin.register(Recipe)
@@ -25,4 +30,9 @@ class MenuAdmin(admin.ModelAdmin):
 
 @admin.register(Allergy)
 class AllergyAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(RecipeShow)
+class RecipeShowAdmin(admin.ModelAdmin):
     pass
