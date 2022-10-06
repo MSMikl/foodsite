@@ -1,5 +1,6 @@
 import argparse
 import json
+from logging import PercentStyle
 import pprint
 import random
 from itertools import chain
@@ -42,7 +43,13 @@ def get_recipe_ingredients(recipe_soup: BeautifulSoup) -> str:
 def get_recipe_instruction(recipe_soup: BeautifulSoup) -> str:
     c1 = 'article.item-bl.item-about div'
     c2 = 'ul li.cooking-bl div p'
-    return '\n'.join(x.text for x in recipe_soup.select(f'{c1} {c2}'))
+    instruction = '\n'.join(
+        x.text
+        for x in recipe_soup.select(f'{c1} {c2}')
+    )
+    if not instruction:
+        return None
+    return instruction
 
 
 def get_portion_calories(recipe_soup: BeautifulSoup) -> float:
@@ -56,13 +63,32 @@ def get_portion_calories(recipe_soup: BeautifulSoup) -> float:
     return calories
 
 
+def get_images_urls(recipe_soup: BeautifulSoup) -> list:
+    images = []
+    title_img = recipe_soup.select_one('div.m-img img')['src']
+    if title_img == 'https://www.povarenok.ru/images/recipes/1.gif':
+        return None
+    images.append(title_img)
+    c1 = 'body article.item-bl.item-about div'
+    c2 = 'ul li.cooking-bl span.cook-img a img'
+    cook_imgs = recipe_soup.select(f'{c1} {c2}')
+    if not cook_imgs:
+        return None
+    images.extend(x['src'] for x in cook_imgs)
+    return images
+
+
 def parse_recipe_page(recipe_soup: BeautifulSoup):
-    return {
+    parsed_recipe = {
         'title': get_recipe_title(recipe_soup),
         'ingredients': get_recipe_ingredients(recipe_soup),
         'instruction': get_recipe_instruction(recipe_soup),
         'portion_calories': get_portion_calories(recipe_soup),
+        'images': get_images_urls(recipe_soup),
     }
+    if None in parsed_recipe.values():
+        return None
+    return parsed_recipe
 
 
 def get_one_page_recipe_ids(genre_url: str, page: int) -> list:
