@@ -1,10 +1,11 @@
 import argparse
 import json
+import pprint
+import random
 from itertools import chain
 from pathlib import Path
 from time import sleep
 from urllib.parse import unquote, urljoin, urlsplit
-import random
 
 import requests
 from bs4 import BeautifulSoup
@@ -29,8 +30,19 @@ def get_recipe_title(recipe_soup: BeautifulSoup) -> str:
     return recipe_soup.select_one('article.item-bl.item-about div h1').text
 
 
-def get_recipe_text(recipe_soup: BeautifulSoup) -> str:
-    return ''
+def get_recipe_ingredients(recipe_soup: BeautifulSoup) -> str:
+    c1 = 'article.item-bl.item-about'
+    c2 = 'div div.ingredients-bl ul li'
+    return '\n'.join(
+        ' '.join(x.text.replace('\n', '').split())
+        for x in recipe_soup.select(f'{c1} {c2}')
+    )
+
+
+def get_recipe_instruction(recipe_soup: BeautifulSoup) -> str:
+    c1 = 'article.item-bl.item-about div'
+    c2 = 'ul li.cooking-bl div p'
+    return '\n'.join(x.text for x in recipe_soup.select(f'{c1} {c2}'))
 
 
 def get_portion_calories(recipe_soup: BeautifulSoup) -> float:
@@ -47,7 +59,8 @@ def get_portion_calories(recipe_soup: BeautifulSoup) -> float:
 def parse_recipe_page(recipe_soup: BeautifulSoup):
     return {
         'title': get_recipe_title(recipe_soup),
-        'text': get_recipe_text(recipe_soup),
+        'ingredients': get_recipe_ingredients(recipe_soup),
+        'instruction': get_recipe_instruction(recipe_soup),
         'portion_calories': get_portion_calories(recipe_soup),
     }
 
@@ -68,11 +81,13 @@ def main():
 
     test_page = get_one_page_recipe_ids(recipes_url, random_page)
 
-    print(test_page)
     print()
-    test_recipe = parse_recipe_page(get_recipe_soup(random.choice(test_page)))
-    print(test_recipe)
-
+    test_recipe = parse_recipe_page(
+        get_recipe_soup(
+            random.choice(test_page)
+        )
+    )
+    pprint.pprint(test_recipe)
 
 
 if __name__ == '__main__':
