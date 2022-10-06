@@ -15,10 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+
 from backend.views import (
     IndexView, AuthView, LoginView, OrderView,
-    RegisterView, RecipeView,
+    RegisterView, RecipeView, CabinetView
 )
+
 
 urlpatterns = [
     path('', IndexView.as_view()),
@@ -28,4 +30,5 @@ urlpatterns = [
     path('order/', OrderView.as_view(), name='order'),
     path('register/', RegisterView.as_view(), name='register'),
     path('recipe/', RecipeView.as_view(), name='recipe'),
+    path('lk/', CabinetView.as_view(), name='lk'),
 ]
