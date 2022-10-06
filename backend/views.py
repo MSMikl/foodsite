@@ -3,8 +3,9 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import TemplateView
+from django.utils import timezone
 
-from backend.models import Type, Allergy, User
+from backend.models import Type, Allergy, User, Order
 
 
 class IndexView(TemplateView):
@@ -30,7 +31,9 @@ class LoginView(View):
             login(request, user)
             return render(request, 'lk.html')
 
-        return render(request, "auth.html")
+        return render(request, "auth.html", context={
+            'error': 'Пожалуйста введите корректные логин и пароль'
+        })
 
 
 class OrderView(View):
@@ -71,6 +74,24 @@ class RegisterView(View):
         user = User.objects.create_user(email=email, password=password, name=name)
         if user:
             login(request, user)
-            return render(request, 'lk.html')
+            return redirect('lk/')
         print(user)
         return redirect('/')
+
+
+class CabinetView(View):
+    def get(self, request):
+        if not request.user.id:
+            return redirect('/auth/')
+        order = Order.objects.filter(finish_time__gte=timezone.now()).last()
+        if not order:
+            return render(request, 'lk.html')
+        context = {
+            'types': [type.name for type in order.types.all()],
+            'allergies': [allergy.name for allergy in order.allergies.all()],
+            'menus': [menu.name for menu in order.menus.all()],
+            'persons': order.persons,
+            'calories': order.calories,
+            'finish_time': order.finish_time,
+        }
+        return render(request, 'lk.html', context=context)
