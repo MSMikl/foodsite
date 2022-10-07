@@ -154,6 +154,7 @@ class RecipeView(View):
                 .filter(user=request.user, recipe__in=recipes)\
                 .earliest('date')
             recipe = earliest_show.recipe
+        print(recipe)
         return render(
             request,
             template_name='recipe.html',

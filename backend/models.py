@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin
@@ -93,10 +94,35 @@ class Type(models.Model):
 class Recipe(models.Model):
     name = models.CharField('Название', max_length=150)
     content = models.TextField('Состав')
+    ingredients = models.TextField(
+        verbose_name='Ингредиенты',
+        blank=True,
+    )
     calories = models.IntegerField('Калорийность')
-    allergies = models.ManyToManyField(Allergy, blank=True, related_name='recipes', verbose_name='Аллергии')
-    menus = models.ManyToManyField(Menu, blank=True, related_name='recipes', verbose_name='Типы меню')
+    allergies = models.ManyToManyField(
+        Allergy,
+        blank=True,
+        related_name='recipes',
+        verbose_name='Аллергии'
+    )
+    menus = models.ManyToManyField(
+        Menu,
+        blank=True, 
+        related_name='recipes',
+        verbose_name='Типы меню'
+    )
     image = models.ImageField('Изображение', null=True, blank=True)
+
+    def set_ingredients(self, ingredients):
+        self.ingredients = json.dumps(ingredients)
+
+    def get_ingredients(self):
+        return json.loads(self.ingredients)
+
+    def del_ingredients(self):
+        del self.ingredients
+
+    ingreds = property(get_ingredients, set_ingredients, del_ingredients, "Ingreds")
 
     def __str__(self) -> str:
         return self.name
@@ -107,7 +133,12 @@ class Recipe(models.Model):
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name='Клиент')
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Клиент'
+    )
     types = models.ManyToManyField(Type, related_name='orders', verbose_name='Приемы пищи')
     menus = models.ManyToManyField(Menu, blank=True, related_name='orders', verbose_name='Меню')
     allergies = models.ManyToManyField(Allergy, blank=True, related_name='orders', verbose_name='Аллергии')
