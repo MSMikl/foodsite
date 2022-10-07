@@ -9,8 +9,8 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'image', 'calories']
-
+    list_display = ['name', 'image_tag', 'calories']
+    readonly_fields = ['image_tag']
 
 
 @admin.register(Order)

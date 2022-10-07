@@ -61,8 +61,8 @@ class OrderView(View):
         order = Order(
             user=request.user,
             persons=request.POST.get('persons'),
-            calories=1200,
-            price=500,
+            calories=request.POST.get('calories'),
+            price=request.POST.get('price'),
             finish_time=timezone.now() + timedelta(days=int(request.POST.get('length'))*30)
         )
         order.save()
@@ -101,12 +101,11 @@ class RecipeView(View):
         # получаем активную подписку
         order = request.user.orders.filter(
             start_time__lte=timezone.now(), finish_time__gte=timezone.now()
-            ).first()
+            ).last()
         if not order:
             return render(request,
                           template_name='recipe.html',
                           context={'error': 'Нет активных подписок'})
-
         eat_times = order.types.count()
 
         # проверяем лимит рецептов
@@ -120,13 +119,13 @@ class RecipeView(View):
                 template_name='recipe.html',
                 context={'error': 'На сегодня лимит рецептов исчерпан'}
                 )
+        print(recipes_shown_today['calories'])
         calories_remain = order.calories / order.persons
         if recipes_shown_today['calories']:
             calories_remain -= recipes_shown_today['calories']
 
         # фильтруем по аллергии
         recipes = Recipe.objects.exclude(allergies__in=order.allergies.all())
-
         # фильтруем по калориям
         recipes = recipes.filter(
             calories__lte=calories_remain / eat_times_remain * 1.2
@@ -134,6 +133,7 @@ class RecipeView(View):
         recipes = recipes.filter(
             calories__gte=calories_remain / eat_times_remain * 0.8
             )
+
         if not recipes:
             return render(
                 request,
@@ -146,7 +146,7 @@ class RecipeView(View):
             shows__in=RecipeShow.objects.filter(user=request.user)
         )
         if recipe_never_shown:
-            recipe = recipe_never_shown
+            recipe = recipe_never_shown.last()
             print('never', recipe)
         else:
             # ищем самый ранний из показанных
@@ -157,7 +157,13 @@ class RecipeView(View):
         return render(
             request,
             template_name='recipe.html',
-            context={'recipe': recipe}
+            context={
+                'name': recipe.name,
+                'calories': recipe.calories,
+                'ingredients': recipe.ingreds,
+                'content': recipe.content,
+                'image_url': recipe.image.url
+            }
         )
 
 
@@ -177,3 +183,19 @@ class CabinetView(View):
             'finish_time': order.finish_time,
         }
         return render(request, 'lk.html', context=context)
+
+    def post(self, request):
+        if not request.user.id:
+            return redirect('/auth/')
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = request.user
+        if name:
+            user.name = name
+        if email:
+            user.email = email
+        if password:
+            user.set_password(password)
+        user.save()
+        return self.get(request)
