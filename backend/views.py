@@ -162,6 +162,7 @@ class RecipeView(View):
                 'calories': recipe.calories,
                 'ingredients': recipe.ingreds,
                 'content': recipe.content,
+                'image_url': recipe.image.url
             }
         )
 

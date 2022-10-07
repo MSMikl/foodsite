@@ -4,6 +4,7 @@ import json
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.utils.html import mark_safe
 
 
 class UserManager(BaseUserManager):
@@ -112,6 +113,11 @@ class Recipe(models.Model):
         verbose_name='Типы меню'
     )
     image = models.ImageField('Изображение', null=True, blank=True)
+
+    def image_tag(self):
+            return mark_safe(f'<img src="/media/{self.image}" style="max-width:150px;max-height:150px;height:auto;width:auto"/>')
+
+    image_tag.short_description = 'Картинка'
 
     def set_ingredients(self, ingredients):
         self.ingredients = json.dumps(ingredients)
