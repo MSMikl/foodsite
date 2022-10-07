@@ -50,9 +50,12 @@ def get_recipe_ingredients(recipe_soup: BeautifulSoup) -> str:
 def get_recipe_instruction(recipe_soup: BeautifulSoup) -> str:
     c1 = 'article.item-bl.item-about div'
     c2 = 'ul li.cooking-bl div p'
+    instruction_soup = recipe_soup.select(f'{c1} {c2}')
+    if not instruction_soup:
+        return None
     instruction = '\n'.join(
         x.text
-        for x in recipe_soup.select(f'{c1} {c2}')
+        for x in instruction_soup
     )
     if not instruction:
         return None
@@ -76,7 +79,10 @@ def get_portion_calories(recipe_soup: BeautifulSoup) -> float:
 
 def get_images_urls(recipe_soup: BeautifulSoup) -> list:
     def_img = 'https://www.povarenok.ru/images/recipes/1.gif'
-    title_img = recipe_soup.select_one('div.m-img img')['src']
+    title_img_soup = recipe_soup.select_one('div.m-img img')
+    if not title_img_soup:
+        return None
+    title_img = title_img_soup['src']
     if title_img == def_img:
         return None
     images = []
