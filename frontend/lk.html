@@ -58,18 +58,23 @@
                                         <div class="mb-3">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <label for="exampleInputEmail1" class="form-label">Имя</label>
+                                                <small><a id="name" href="#" class="link-dark foodplan_green" onclick="enableform(this)">изменить</a></small>
                                             </div>                                        
-                                            <input type="text" class="form-control" id="name" value="{{user.name}}" name="name">
+                                            <input type="text" class="form-control" id="name" value="{{user.name}}" name="name" disabled="true">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="exampleInputEmail1" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" value="{{user.email}}" name="email">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <label for="exampleInputEmail1" class="form-label">Email</label>
+                                                <small><a id="email" href="#" class="link-dark foodplan_green" onclick="enableform(this)">изменить</a></small>
+                                            </div>
+                                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" value="{{user.email}}" name="email" disabled="true">
                                         </div>
                                         <div class="mb-3">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <label for="exampleInputPassword1" class="form-label">Пароль</label>
+                                                <small><a id="password" href="#" class="link-dark foodplan_green" onclick="enableform(this)">изменить</a></small>
                                             </div>                                        
-                                            <input type="password" class="form-control" id="password" name="password" onchange="CheckPasswordMatch()">
+                                            <input type="password" class="form-control" id="password" name="password" onchange="CheckPasswordMatch()" disabled="true">
                                         </div>
                                         <div class="mb-3">
                                             <label for="exampleInputPassword1" class="form-label">Подтверждение пароля</label>
@@ -168,6 +173,10 @@
             } else {
                 confirm.setCustomValidity('Passwords do not match');
             }
+        }
+        function enableform(feature) {
+            const field = document.querySelector(`input[name=${feature.id}]`)
+            field.disabled = false
         }
     </script>
 </body>
