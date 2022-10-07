@@ -101,12 +101,11 @@ class RecipeView(View):
         # получаем активную подписку
         order = request.user.orders.filter(
             start_time__lte=timezone.now(), finish_time__gte=timezone.now()
-            ).first()
+            ).last()
         if not order:
             return render(request,
                           template_name='recipe.html',
                           context={'error': 'Нет активных подписок'})
-
         eat_times = order.types.count()
 
         # проверяем лимит рецептов
@@ -120,13 +119,13 @@ class RecipeView(View):
                 template_name='recipe.html',
                 context={'error': 'На сегодня лимит рецептов исчерпан'}
                 )
+        print(recipes_shown_today['calories'])
         calories_remain = order.calories / order.persons
         if recipes_shown_today['calories']:
             calories_remain -= recipes_shown_today['calories']
 
         # фильтруем по аллергии
         recipes = Recipe.objects.exclude(allergies__in=order.allergies.all())
-
         # фильтруем по калориям
         recipes = recipes.filter(
             calories__lte=calories_remain / eat_times_remain * 1.2
@@ -134,6 +133,7 @@ class RecipeView(View):
         recipes = recipes.filter(
             calories__gte=calories_remain / eat_times_remain * 0.8
             )
+
         if not recipes:
             return render(
                 request,
@@ -146,7 +146,7 @@ class RecipeView(View):
             shows__in=RecipeShow.objects.filter(user=request.user)
         )
         if recipe_never_shown:
-            recipe = recipe_never_shown
+            recipe = recipe_never_shown.last()
             print('never', recipe)
         else:
             # ищем самый ранний из показанных
@@ -154,11 +154,15 @@ class RecipeView(View):
                 .filter(user=request.user, recipe__in=recipes)\
                 .earliest('date')
             recipe = earliest_show.recipe
-        print(recipe)
         return render(
             request,
             template_name='recipe.html',
-            context={'recipe': recipe}
+            context={
+                'name': recipe.name,
+                'calories': recipe.calories,
+                'ingredients': recipe.ingreds,
+                'content': recipe.content,
+            }
         )
 
 
