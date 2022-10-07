@@ -61,8 +61,8 @@ class OrderView(View):
         order = Order(
             user=request.user,
             persons=request.POST.get('persons'),
-            calories=1200,
-            price=500,
+            calories=request.POST.get('calories'),
+            price=request.POST.get('price'),
             finish_time=timezone.now() + timedelta(days=int(request.POST.get('length'))*30)
         )
         order.save()
@@ -192,4 +192,4 @@ class CabinetView(View):
         if password:
             user.set_password(password)
         user.save()
-        return render(request, 'lk.html')
+        return self.get(request)
