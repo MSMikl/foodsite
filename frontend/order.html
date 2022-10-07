@@ -77,6 +77,13 @@
                             </td>
                         </tr>
                         <tr>
+                            <th scope="row" class="text-start">Калорийность в сутки</th>
+                            <td>
+                                <input name="calories" type="range" min="500" max="2800" onchange="changecalories(this)"/>
+                                <h6 id="calories">1650 калорий</h6>
+                            </td>
+                        </tr>
+                        <tr>
                             <th scope="row" class="text-start">Аллергии</th>
                             <td>
                                 {% for allergy in allergies %}
@@ -91,6 +98,7 @@
                         </tr>
                     </tbody>
                 </table>
+                <input type="hidden" name="price" value="0"/>
                 {% csrf_token %}
                 <button type="submit" id="TableSubmit" class="btn btn-outline-success foodplan_green foodplan__border_green w-50" formaction="{% url 'order' %}" formmethod="post">Продолжить</button>
                 </form>
@@ -108,6 +116,10 @@
                 running_total += parseInt(el.value);
             };
             document.querySelector('.total').textContent = "Стоимость " + running_total + " ₽";
+            document.querySelector('input[name=price]').value = running_total;
+        }
+        function changecalories(feature) {
+            document.querySelector('h6[id=calories]').textContent = document.querySelector('input[name=calories]').value + " калорий"
         }
     </script>
 </body>

@@ -61,8 +61,8 @@ class OrderView(View):
         order = Order(
             user=request.user,
             persons=request.POST.get('persons'),
-            calories=1200,
-            price=500,
+            calories=request.POST.get('calories'),
+            price=request.POST.get('price'),
             finish_time=timezone.now() + timedelta(days=int(request.POST.get('length'))*30)
         )
         order.save()
@@ -196,3 +196,19 @@ class CabinetView(View):
             'finish_time': order.finish_time,
         }
         return render(request, 'lk.html', context=context)
+
+    def post(self, request):
+        if not request.user.id:
+            return redirect('/auth/')
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = request.user
+        if name:
+            user.name = name
+        if email:
+            user.email = email
+        if password:
+            user.set_password(password)
+        user.save()
+        return self.get(request)
