@@ -30,36 +30,37 @@ def get_recipe_title(recipe_soup: BeautifulSoup) -> str:
     return title_soup.text
 
 
-def get_recipe_ingredients(recipe_soup: BeautifulSoup) -> str:
+def get_recipe_ingredients(recipe_soup: BeautifulSoup) -> dict:
+    dash = '—'
     c1 = 'article.item-bl.item-about'
     c2 = 'div div.ingredients-bl ul li'
     ingredients_soup = recipe_soup.select(f'{c1} {c2}')
     if not ingredients_soup:
         return None
-    ingredients = '\n'.join(
-        ' '.join(x.text.replace('\n', '').split())
+    ingredients = [
+        ' '.join(x.text.replace('\n', '').replace('\r', '').split())
         for x in ingredients_soup
-    )
+    ]
     if not ingredients:
         return None
-    if not ingredients.replace('\n', ''):
+    if not '\n'.join(ingredients).replace('\n', ''):
         return None
-    return ingredients
+    _ingredients = [
+        x.split(dash) if dash in x else [x, ''] for x in ingredients
+    ]
+    return dict(_ingredients)
 
 
-def get_recipe_instruction(recipe_soup: BeautifulSoup) -> str:
+def get_recipe_instruction(recipe_soup: BeautifulSoup) -> list:
     c1 = 'article.item-bl.item-about div'
     c2 = 'ul li.cooking-bl div p'
     instruction_soup = recipe_soup.select(f'{c1} {c2}')
     if not instruction_soup:
         return None
-    instruction = '\n'.join(
-        x.text
-        for x in instruction_soup
-    )
+    instruction = [x.text.replace('\r', '') for x in instruction_soup]
     if not instruction:
         return None
-    if not instruction.replace('\n', ''):
+    if not '\n'.join(instruction).replace('\n', ''):
         return None
     return instruction
 
@@ -74,6 +75,8 @@ def get_portion_calories(recipe_soup: BeautifulSoup) -> float:
     calories = float(nutrition_tags[6].text.strip(' ккал'))
     if 'Порции' not in portion:
         return calories * 2.0
+    if calories == 0.0 or calories == 0:
+        return None
     return calories
 
 
@@ -96,7 +99,31 @@ def get_images_urls(recipe_soup: BeautifulSoup) -> list:
     return images
 
 
-def parse_recipe_page(recipe_url: str):
+def get_recipe_type(recipe_soup: BeautifulSoup) -> list:
+    c1 = 'body article.item-bl.item-about div'
+    c2 = 'div#tags-recipes-01.article-tags'
+    c3 = 'div.tabs-wrap div.tab-content'
+    purpose_soup = recipe_soup.select(f'{c1} {c2} {c3}')
+    if not purpose_soup:
+        return None
+    purpose_text = ' '.join(purpose_soup[0].text.lower().split())
+    if 'десерт' in purpose_text in purpose_text:
+        return ['десерт']
+    recipe_type = []
+    if 'завтрак' in purpose_text:
+        recipe_type.append('завтрак')
+    if 'обед' in purpose_text:
+        recipe_type.append('обед')
+    if 'полдник' in purpose_text:
+        recipe_type.append('полдник')
+    if 'ужин' in purpose_text:
+        recipe_type.append('ужин')
+    if not recipe_type:
+        return None
+    return recipe_type
+
+
+def parse_recipe_page(recipe_url: str) -> dict:
     response = requests.get(recipe_url)
     response.raise_for_status()
     recipe_soup = BeautifulSoup(response.text, 'lxml')
@@ -106,21 +133,24 @@ def parse_recipe_page(recipe_url: str):
         'instruction': get_recipe_instruction(recipe_soup),
         'portion_calories': get_portion_calories(recipe_soup),
         'images': get_images_urls(recipe_soup),
+        'type': get_recipe_type(recipe_soup),
     }
     if None in parsed_recipe.values():
         return None
     return parsed_recipe
 
 
-def get_recipe_urls(page: int) -> list:
+def get_recipes_urls(page: int) -> list:
     recipes_url = 'https://www.povarenok.ru/recipes/'
     page_url = f'{recipes_url}~{page}/'
     response = requests.get(page_url)
     response.raise_for_status()
     check_for_page_redirect(response, page)
     soup = BeautifulSoup(response.text, 'lxml')
-    return [book.select_one('h2').select_one('a')['href'].strip('/b')
-            for book in soup.select('body article.item-bl')]
+    return [
+        book.select_one('h2').select_one('a')['href'].strip('/b')
+        for book in soup.select('body article.item-bl')
+    ]
 
 
 def get_parsed_recipes(number: int) -> list:
@@ -134,7 +164,7 @@ def get_parsed_recipes(number: int) -> list:
     )
     parsed_recipes = []
     for page in random_pages:
-        for url in get_recipe_urls(page):
+        for url in get_recipes_urls(page):
             if len(parsed_recipes) >= number:
                 break
             parsed_recipe = parse_recipe_page(url)
