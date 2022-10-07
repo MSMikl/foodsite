@@ -1,7 +1,9 @@
 import argparse
 import json
+import os
 import random
 from pathlib import Path
+from django.conf import settings
 
 import requests
 from bs4 import BeautifulSoup
@@ -13,10 +15,10 @@ def check_for_page_redirect(response: requests.Response, page):
         raise requests.HTTPError(err_msg)
 
 
-def save_pretty_json(data, path: str):
-    json_path = Path(path)
-    json_path.mkdir(parents=True, exist_ok=True)
-    file_path = json_path.joinpath('recipes.json')
+def save_pretty_json(data, filename: str):
+    # json_path = Path(path)
+    # json_path.mkdir(parents=True, exist_ok=True)
+    file_path = os.path.join(settings.STATIC_ROOT, filename)
     with open(file_path, 'w', encoding='utf8') as file:
         file.write(json.dumps(data, indent=4, ensure_ascii=False))
 
@@ -174,8 +176,10 @@ def get_parsed_recipes(number: int) -> list:
     return parsed_recipes
 
 
-def save_recipes(number: int):
-    save_pretty_json(get_parsed_recipes(number), 'frontend')
+def save_recipes(number: int, filename: str='recipes.json'):
+    if not filename.endswith('.json'):
+        filename += '.json'
+    save_pretty_json(get_parsed_recipes(number), filename)
 
 
 def main():
