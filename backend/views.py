@@ -1,9 +1,9 @@
 from datetime import timedelta
 import email
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum,  Max
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView
 from django.utils import timezone
@@ -98,6 +98,21 @@ class RegisterView(View):
 
 class RecipeView(View):
     def get(self, request, *args, **kwargs):
+        if not request.GET.get('getnew'):  # запрос без параметров - выдаем рецепт из истории
+            last_show = RecipeShow.objects.filter(user=request.user).latest('date')
+            if last_show:
+                context = {'recipe':  last_show.recipe}
+            else:
+                context = {
+                    'error': 'Вы еще не получали рецепты. Начните прямо сейчас!'
+                }
+            return render(
+                request,
+                template_name='recipe.html',
+                context=context
+            )
+
+        # запрос с параметром .../recipe?getnew=true - выдаем новый рецепт
         # получаем активную подписку
         order = request.user.orders.filter(
             start_time__lte=timezone.now(), finish_time__gte=timezone.now()
@@ -149,11 +164,15 @@ class RecipeView(View):
             recipe = recipe_never_shown
             print('never', recipe)
         else:
-            # ищем самый ранний из показанных
-            earliest_show = RecipeShow.objects\
-                .filter(user=request.user, recipe__in=recipes)\
-                .earliest('date')
-            recipe = earliest_show.recipe
+            # ищем самый ранний по последнему показу
+            recipe = recipes.prefetch_related('shows')\
+                .values('id', 'name', 'content', 'calories', 'image',
+                        last_show=Max('shows__date')
+                        )\
+                .order_by('last_show')\
+                .first()
+
+        RecipeShow.objects.create(recipe_id=recipe['id'], user=request.user)
         return render(
             request,
             template_name='recipe.html',

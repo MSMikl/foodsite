@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>This is temporary template for testing purposes</h1>
+{% if recipe %}
+  <p><b>Название</b><br>
+  {{ recipe.name }}</p>
+  <p><b>Содержание</b><br>
+  {{ recipe.content }}</p>
+  <p><b>Калории</b><br>
+  {{ recipe.calories }}</p>
+  <p><b>Аллергии</b><br>
+  {{ recipe.allergies }}</p>
+{% else %}
+    <p>{{ error }}</p>
+{% endif %}
+
+</body>
+</html>
