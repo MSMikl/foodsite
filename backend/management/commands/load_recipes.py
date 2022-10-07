@@ -13,9 +13,9 @@ class Command(BaseCommand):
     help = 'Loads recipes from povarenok.ru'
 
     def add_arguments(self, parser):
-        parser.add_argument('-n', '--number', type=int, action='store')
-        parser.add_argument('-fn', '--filename', type=str, action='store')
-        parser.add_argument('-fj', '--fromjson', type=str, action='store')
+        parser.add_argument('-n', '--number', type=int, action='store', help='Число рецептов для загрузки с povarenok.ru')
+        parser.add_argument('-fn', '--filename', type=str, action='store', help='Имя json файла для сохранения загруженных рецептов')
+        parser.add_argument('-fj', '--fromjson', type=str, action='store', help='Имя json файта для сохраннения рецептов в базу')
 
     def download_image(self, url, recipe):
         filename = split(url)[1]
@@ -23,7 +23,7 @@ class Command(BaseCommand):
         if not response.ok:
             self.stdout.write(self.style.WARNING(f'Image not found: {url}'))
             return
-        recipe.picture.save(
+        recipe.image.save(
             filename,
             ContentFile(response.content),
             save=True
