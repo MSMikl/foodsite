@@ -24,7 +24,7 @@ class AuthView(View):
         if request.GET.get('logout'):
             logout(request)
         return render(request, "auth.html", context={
-            'next': request.GET.get('next'),
+            'next': request.GET.get('next', 'index'),
         })
 
     def post(self, request):
