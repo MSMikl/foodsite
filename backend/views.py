@@ -99,7 +99,12 @@ class RegisterView(View):
 class RecipeView(View):
     def get(self, request, *args, **kwargs):
         if not request.GET.get('getnew'):  # запрос без параметров - выдаем рецепт из истории
-            last_show = RecipeShow.objects.filter(user=request.user).latest('date')
+            try:
+                last_show = RecipeShow.objects.filter(user=request.user).latest(
+                    'date'
+                    )
+            except RecipeShow.DoesNotExist:
+                last_show = None
             if last_show:
                 context = {'recipe':  last_show.recipe}
             else:
