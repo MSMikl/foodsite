@@ -32,9 +32,8 @@ urlpatterns = [
     path('auth/', AuthView.as_view(), name='auth'),
     path('order/', login_required(OrderView.as_view()), name='order'),
     path('register/', RegisterView.as_view(), name='register'),
-    path('recipe/', RecipeView.as_view(), name='recipe'),
+    path('recipe/', login_required(RecipeView.as_view()), name='recipe'),
     path('lk/', login_required(CabinetView.as_view()), name='lk'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
