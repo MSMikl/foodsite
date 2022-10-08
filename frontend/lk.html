@@ -20,7 +20,7 @@
                 </a>
                 <form>
                     <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit" formaction="{% url 'auth' %}" name="logout" value="True">Выйти</button>
-                </form>                
+                </form>
             </div>
         </nav>
     </header>
@@ -123,17 +123,23 @@
                                                             <small>Кол-во приёмов пищи: </small><small>{{types|length}}</small>
                                                         </div>                                                        
                                                     </div>
+                                                    <form action="{% url 'recipe' %}">
+                                                        <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit" name="getnew" value="True">Получить новый рецепт</button>
+                                                        <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit">Посмотреть последний рецепт</button>
+                                                    </form>
                                                 </div>
                                             </div>
                                         {% else %}
                                             <div class="col-12">
                                                 <h2>У вас пока нет активных подписок</h2>
                                             </div>
+                                            <form>
+                                                <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit" formaction="{% url 'order' %}">Выбрать подписку</button>
+                                            </form>
                                         {% endif %}
                                     </div>
                                 </div>
-                            </div>
-                            
+                            </div>                            
                     </div>
                 </div>
             </div>

@@ -18,7 +18,9 @@
                 <a class="navbar-brand" href="#">
                     <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
-                <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green">Назад</button>
+                <form>
+                    <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" formaction="{{ request.META.HTTP_REFERER }}">Назад</button>
+                </form>
             </div>
         </nav>
     </header>

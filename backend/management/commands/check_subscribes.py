@@ -19,3 +19,5 @@ class Command(BaseCommand):
             self.send_email(order.user.email)
 
         finished_orders = Order.objects.filter(finish_time=(nowadays - timedelta(days=1)))
+        for order in finished_orders:
+            self.send_email(order.user.email)

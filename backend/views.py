@@ -12,26 +12,31 @@ from django.utils import timezone
 from backend.models import Type, Allergy, User, Recipe, RecipeShow, Order
 
 
-class IndexView(TemplateView):
-    template_name = "index.html"
+class IndexView(View):
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('logout'):
+            logout(request)
+        return render(request, "index.html")
 
 
 class AuthView(View):
     def get(self, request, *args, **kwargs):
         if request.GET.get('logout'):
             logout(request)
-        return render(request, "auth.html")
+        return render(request, "auth.html", context={
+            'next': request.GET.get('next'),
+        })
 
     def post(self, request):
         print(request.POST)
         email = request.POST['email']
         password = request.POST['password']
-
+        next = request.POST.get('next', 'lk')
         user = authenticate(request, email=email, password=password)
         print(user)
         if user:
             login(request, user)
-            return redirect('/lk/')
+            return redirect(next)
 
         return render(request, "auth.html", context={
             'error': 'Пожалуйста введите корректные логин и пароль'
@@ -177,7 +182,7 @@ class RecipeView(View):
                 .order_by('last_show')\
                 .first()
 
-        RecipeShow.objects.create(recipe_id=recipe['id'], user=request.user)
+        RecipeShow.objects.create(recipe_id=recipe.id, user=request.user)
         return render(
             request,
             template_name='recipe.html',

@@ -27,7 +27,7 @@ from backend.views import (
 
 
 urlpatterns = [
-    path('', IndexView.as_view()),
+    path('', IndexView.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('auth/', AuthView.as_view(), name='auth'),
     path('order/', login_required(OrderView.as_view()), name='order'),
