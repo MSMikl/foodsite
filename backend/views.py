@@ -112,11 +112,7 @@ class RecipeView(View):
                 last_show = None
             if last_show:
                 context={
-                    'name': last_show.recipe.name,
-                    'calories': last_show.recipe.calories,
-                    'ingredients': last_show.recipe.ingreds,
-                    'content': last_show.recipe.content,
-                    'image_url': last_show.recipe.image.url,
+                    'recipe': last_show.recipe,
                 }
             else:
                 context = {
@@ -193,11 +189,7 @@ class RecipeView(View):
             request,
             template_name='recipe.html',
             context={
-                'name': recipe.name,
-                'calories': recipe.calories,
-                'ingredients': recipe.ingreds,
-                'content': recipe.content,
-                'image_url': recipe.image.url
+                'recipe': recipe,
             }
         )
 
@@ -206,7 +198,7 @@ class CabinetView(View):
     def get(self, request):
         if not request.user.id:
             return redirect('/auth/')
-        order = Order.objects.filter(user__id=request.user.id).filter(finish_time__gte=timezone.now()).last()
+        order = Order.objects.filter(user__id=request.user.id).filter(finish_time__gte=timezone.now()).select_related().last()
         if not order:
             return render(request, 'lk.html')
         context = {
