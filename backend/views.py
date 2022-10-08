@@ -105,13 +105,19 @@ class RecipeView(View):
     def get(self, request, *args, **kwargs):
         if not request.GET.get('getnew'):  # запрос без параметров - выдаем рецепт из истории
             try:
-                last_show = RecipeShow.objects.filter(user=request.user).latest(
+                last_show = RecipeShow.objects.filter(user=request.user).select_related().latest(
                     'date'
                     )
             except RecipeShow.DoesNotExist:
                 last_show = None
             if last_show:
-                context = {'recipe':  last_show.recipe}
+                context={
+                    'name': last_show.recipe.name,
+                    'calories': last_show.recipe.calories,
+                    'ingredients': last_show.recipe.ingreds,
+                    'content': last_show.recipe.content,
+                    'image_url': last_show.recipe.image.url,
+                }
             else:
                 context = {
                     'error': 'Вы еще не получали рецепты. Начните прямо сейчас!'
