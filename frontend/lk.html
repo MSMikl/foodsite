@@ -20,7 +20,7 @@
                 </a>
                 <form>
                     <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit" formaction="{% url 'auth' %}" name="logout" value="True">Выйти</button>
-                </form>                
+                </form>
             </div>
         </nav>
     </header>
@@ -38,7 +38,9 @@
                     <div class="card col-12 col-md-2 p-3 mb-3 d-flex flex-column align-items-center foodplan__shadow">
                         <h3 class="card-title text-center">{{user.name}}</h3>
                         <div class="d-block">
-                            <button class="btn btn-outline-success foodplan_green foodplan__border_green">Выйти</button>
+                            <form>
+                                <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit" formaction="{% url 'auth' %}" name="logout" value="True">Выйти</button>
+                            </form>
                         </div>
                     </div>
 
@@ -123,17 +125,23 @@
                                                             <small>Кол-во приёмов пищи: </small><small>{{types|length}}</small>
                                                         </div>                                                        
                                                     </div>
+                                                    <form action="{% url 'recipe' %}">
+                                                        <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit" name="getnew" value="True">Получить новый рецепт</button>
+                                                        <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit">Посмотреть последний рецепт</button>
+                                                    </form>
                                                 </div>
                                             </div>
                                         {% else %}
                                             <div class="col-12">
                                                 <h2>У вас пока нет активных подписок</h2>
                                             </div>
+                                            <form>
+                                                <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit" formaction="{% url 'order' %}">Выбрать подписку</button>
+                                            </form>
                                         {% endif %}
                                     </div>
                                 </div>
-                            </div>
-                            
+                            </div>                            
                     </div>
                 </div>
             </div>

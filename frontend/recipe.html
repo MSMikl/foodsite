@@ -18,7 +18,9 @@
                 <a class="navbar-brand" href="#">
                     <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
-                <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green">Назад</button>
+                <form>
+                    <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" formaction="{{ request.META.HTTP_REFERER }}">Назад</button>
+                </form>
             </div>
         </nav>
     </header>
@@ -28,7 +30,7 @@
                 <div class="row">
                     <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card foodplan__card_borderless">
-                            <img src="{{image_url}}" alt="{{name}}" style="max-width:300px;max-height:300px;height:auto;width:auto">
+                            <img src="{{recipe.image.url}}" alt="{{recipe.name}}" style="max-width:300px;max-height:300px;height:auto;width:auto">
                         </div>
                     </div>
                     <div class="col-12 col-md-8 d-flex flex-column justify-content-between">
@@ -36,18 +38,18 @@
                             {% if error %}
                                 <h2>{{error}}</h2>
                             {% else %}
-                            <h2>{{name}}</h2>
+                            <h2>{{recipe.name}}</h2>
                             <div class="col-12 col-sm-6">
-                                <h6>{{content}}</h6>
+                                <h6>{{recipe.content}}</h6>
                             </div>
                             <div class="col-12 col-sm-6">
                                 <small class="link-secondary">Ингредиенты:</small>
                                 <ul class="list-group list-group-flush">
-                                    {% for ingredient, amount in ingredients.items %}
+                                    {% for ingredient, amount in recipe.ingreds.items %}
                                     <li class="list-group-item disabled"><small>{{ingredient}} ({{amount}}г.)</small></li>
                                     {% endfor %}
                                 </ul>
-                                <small class="link-secondary">Общая калорийность: {{calories}} ккал</small>
+                                <small class="link-secondary">Общая калорийность: {{recipe.calories}} ккал</small>
                             </div>
                             {% endif %}
                         </div>

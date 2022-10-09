@@ -19,8 +19,16 @@
                 </a>
                 {% if user.name %}
                     <h4>Здравствуйте, {{user.name}}</h4>
+                    <form action="{% url 'lk' %}">
+                        <button class="btn btn-outline-success foodplan_green foodplan__border_green" name="logout" value="True">Личный кабинет</button>
+                    </form>
+                    <form action="{% url 'index' %}">
+                        <button class="btn btn-outline-success foodplan_green foodplan__border_green" name="logout" value="True">Выйти</button>
+                    </form>
                 {% else %}
-                    <button class="btn btn-outline-success foodplan_green foodplan__border_green">Войти</button>
+                    <form action="{% url 'auth' %}">
+                        <button class="btn btn-outline-success foodplan_green foodplan__border_green" name="next", value="index">Войти</button>
+                    </form>
                 {% endif %}
             </div>
         </nav>
@@ -35,7 +43,18 @@
                             Вы получаете рецепты + список продуктов.<br>
                             Больше не нужно думать, что готовить.</h4>
                         <div class="d-block mt-3">
-                            <button class="btn btn-outline-success foodplan_green foodplan__border_green">Хочу попробовать</button>
+                            {% if user.name %}
+                                <form action="{% url 'recipe' %}">
+                                    <button class="btn btn-outline-success foodplan_green foodplan__border_green" name="getnew" value="True">Получить новый рецепт</button>
+                                </form>
+                                <form action="{% url 'recipe' %}">
+                                    <button class="btn btn-outline-success foodplan_green foodplan__border_green">Посмотреть последний рецепт</button>
+                                </form>
+                            {% else %}
+                                <form action="{% url 'register' %}">
+                                    <button class="btn btn-outline-success foodplan_green foodplan__border_green">Хочу попробовать</button>
+                                </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

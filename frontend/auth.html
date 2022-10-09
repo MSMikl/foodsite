@@ -44,6 +44,7 @@
                             </div>
                             <input name="password" type="password" class="form-control" id="password">
                         </div>
+                        <input name="next" type="hidden" value="{{next}}">
                         <div class="row mb-3">
                             <div class="col-12 col-sm-6 mt-3">
                                 <button type="submit" formmethod="POST" formaction="{% url 'auth' %}"

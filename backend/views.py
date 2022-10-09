@@ -12,26 +12,31 @@ from django.utils import timezone
 from backend.models import Type, Allergy, User, Recipe, RecipeShow, Order
 
 
-class IndexView(TemplateView):
-    template_name = "index.html"
+class IndexView(View):
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('logout'):
+            logout(request)
+        return render(request, "index.html")
 
 
 class AuthView(View):
     def get(self, request, *args, **kwargs):
         if request.GET.get('logout'):
             logout(request)
-        return render(request, "auth.html")
+        return render(request, "auth.html", context={
+            'next': request.GET.get('next', 'index'),
+        })
 
     def post(self, request):
         print(request.POST)
         email = request.POST['email']
         password = request.POST['password']
-
+        next = request.POST.get('next', 'lk')
         user = authenticate(request, email=email, password=password)
         print(user)
         if user:
             login(request, user)
-            return redirect('/lk/')
+            return redirect(next)
 
         return render(request, "auth.html", context={
             'error': 'Пожалуйста введите корректные логин и пароль'
@@ -99,9 +104,16 @@ class RegisterView(View):
 class RecipeView(View):
     def get(self, request, *args, **kwargs):
         if not request.GET.get('getnew'):  # запрос без параметров - выдаем рецепт из истории
-            last_show = RecipeShow.objects.filter(user=request.user).latest('date')
+            try:
+                last_show = RecipeShow.objects.filter(user=request.user).select_related().latest(
+                    'date'
+                    )
+            except RecipeShow.DoesNotExist:
+                last_show = None
             if last_show:
-                context = {'recipe':  last_show.recipe}
+                context={
+                    'recipe': last_show.recipe,
+                }
             else:
                 context = {
                     'error': 'Вы еще не получали рецепты. Начните прямо сейчас!'
@@ -172,16 +184,12 @@ class RecipeView(View):
                 .order_by('last_show')\
                 .first()
 
-        RecipeShow.objects.create(recipe_id=recipe['id'], user=request.user)
+        RecipeShow.objects.create(recipe_id=recipe.id, user=request.user)
         return render(
             request,
             template_name='recipe.html',
             context={
-                'name': recipe.name,
-                'calories': recipe.calories,
-                'ingredients': recipe.ingreds,
-                'content': recipe.content,
-                'image_url': recipe.image.url
+                'recipe': recipe,
             }
         )
 
@@ -190,7 +198,7 @@ class CabinetView(View):
     def get(self, request):
         if not request.user.id:
             return redirect('/auth/')
-        order = Order.objects.filter(user__id=request.user.id).filter(finish_time__gte=timezone.now()).last()
+        order = Order.objects.filter(user__id=request.user.id).filter(finish_time__gte=timezone.now()).select_related().last()
         if not order:
             return render(request, 'lk.html')
         context = {
