@@ -1,15 +1,16 @@
-from datetime import timedelta
-import email
+import json
+from datetime import timedelta, datetime
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Count, Sum,  Max
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import TemplateView
 from django.utils import timezone
+from yookassa import Payment
 
-
-from backend.models import Type, Allergy, User, Recipe, RecipeShow, Order
+from backend.models import (Type, Allergy, User, Recipe, RecipeShow, Order,
+    YookassaPayment,)
 
 
 class IndexView(View):
@@ -44,6 +45,25 @@ class AuthView(View):
 
 
 class OrderView(View):
+    def create_payment(self, amount):
+        payment = Payment.create(
+            {
+                "amount": {
+                    "value": str(amount),
+                    "currency": "RUB"
+                },
+                "payment_method_data": {
+                    "type": "bank_card"
+                },
+                "confirmation": {
+                    "type": "redirect",
+                    "return_url": "https://foodsite.michalbl4.ru/yookassa/"
+                },
+                "description": "Оплата подписки Foodsite"
+            }
+        )
+        return payment.id, payment.confirmation.confirmation_url
+
     def get(self, request):
         types = [{
             'id': type.id,
@@ -61,6 +81,7 @@ class OrderView(View):
         })
 
     def post(self, request):
+        payment_id, payment_url = self.create_payment(request.POST.get('price'))
         print(request.POST)
         print(request.user)
         order = Order(
@@ -78,7 +99,8 @@ class OrderView(View):
             if request.POST.get(allergy.name):
                 order.allergies.add(allergy)
         print(order)
-        return redirect('/lk')
+        YookassaPayment.objects.create(order=order, payment_id=payment_id)
+        return redirect(payment_url)
 
 
 class RegisterView(View):
@@ -127,7 +149,9 @@ class RecipeView(View):
         # запрос с параметром .../recipe?getnew=true - выдаем новый рецепт
         # получаем активную подписку
         order = request.user.orders.filter(
-            start_time__lte=timezone.now(), finish_time__gte=timezone.now()
+            start_time__lte=timezone.now(),
+            finish_time__gte=timezone.now(),
+            is_active=True,
             ).last()
         if not order:
             return render(request,
@@ -198,7 +222,7 @@ class CabinetView(View):
     def get(self, request):
         if not request.user.id:
             return redirect('/auth/')
-        order = Order.objects.filter(user__id=request.user.id).filter(finish_time__gte=timezone.now()).select_related().last()
+        order = Order.objects.filter(user__id=request.user.id, is_active=True).filter(finish_time__gte=timezone.now()).select_related().last()
         if not order:
             return render(request, 'lk.html')
         context = {
@@ -226,3 +250,25 @@ class CabinetView(View):
             user.set_password(password)
         user.save()
         return self.get(request)
+
+
+class PaymentSuccessView(View):
+    def get(self, request, *args, **kwargs):
+        if not request.user.id:
+            return redirect('/auth/')
+        payments = YookassaPayment.objects.filter(
+            order__in=request.user.orders.all(), is_pending=True
+        )
+        for payment in payments:
+            payment_info = Payment.find_one(payment.payment_id)
+            if payment_info.paid:
+                payment.is_pending = False
+                payment.save()
+                payment.order.is_active = True
+                payment.order.save()
+            elif datetime.strptime(
+                    payment_info.expires_at,
+                    "%Y-%m-%dT%H:%M:%S.%fZ"
+            ) < datetime.now():
+                payment.update(is_pending=False)
+        return redirect('/lk')

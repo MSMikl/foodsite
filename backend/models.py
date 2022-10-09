@@ -153,6 +153,7 @@ class Order(models.Model):
     price = models.DecimalField('Цена', decimal_places=0, max_digits=6)
     start_time = models.DateField('Дата начала', auto_now_add=True)
     finish_time = models.DateField('Дата окончания')
+    is_active = models.BooleanField('Действует', default=False)
 
     def __str__(self) -> str:
         return f'Подписка {self.id}'
@@ -170,3 +171,9 @@ class RecipeShow(models.Model):
     class Meta:
         verbose_name = 'Показ'
         verbose_name_plural = 'Показы'
+
+
+class YookassaPayment(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments', verbose_name='Подписка')
+    payment_id = models.CharField('Идентификатор', max_length=40, db_index=True)
+    is_pending = models.BooleanField('Ожидает оплаты', default=True)

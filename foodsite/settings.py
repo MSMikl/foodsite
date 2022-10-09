@@ -15,6 +15,8 @@ import dj_database_url
 
 from pathlib import Path
 from environs import Env
+from yookassa import Configuration
+
 env = Env()
 env.read_env()
 
@@ -149,3 +151,6 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
 EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL')
+
+Configuration.account_id = env('YOOKASSA_SHOP_ID')
+Configuration.secret_key = env('YOOKASSA_SECRET_KEY')
