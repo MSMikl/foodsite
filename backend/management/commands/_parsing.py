@@ -2,8 +2,6 @@ import argparse
 import json
 import os
 import random
-from pathlib import Path
-from django.conf import settings
 
 import requests
 from bs4 import BeautifulSoup
@@ -13,14 +11,6 @@ def check_for_page_redirect(response: requests.Response, page):
     if response.history:
         err_msg = f'There is no page {page}'
         raise requests.HTTPError(err_msg)
-
-
-def save_pretty_json(data, filename: str):
-    # json_path = Path(path)
-    # json_path.mkdir(parents=True, exist_ok=True)
-    file_path = os.path.join(settings.STATIC_ROOT, filename)
-    with open(file_path, 'w', encoding='utf8') as file:
-        file.write(json.dumps(data, indent=4, ensure_ascii=False))
 
 
 def get_recipe_title(recipe_soup: BeautifulSoup) -> str:
@@ -125,17 +115,37 @@ def get_recipe_type(recipe_soup: BeautifulSoup) -> list:
     return recipe_type
 
 
+def get_allergens(ingredients: dict[str, str]) -> set:
+    if not ingredients:
+        return []
+    allergens = {
+        'молоко': ['молок', 'молоч', 'сливки', 'сливоч'],
+        'яйца': ['яйц', 'яич', 'майонез'],
+        'цитрусовые': ['лимон', 'апельсин', 'грейпфрут', 'мандарин'],
+        'шоколад': ['шоколад', 'какао'],
+        'морепродукты': ['кревет', 'кальмар', 'рак', 'краб'],
+    }
+    _allergens = set()
+    for ingredient in ingredients.keys():
+        for y in allergens.keys():
+            if any(x in ingredient.lower() for x in allergens[y]):
+                _allergens.add(y)
+    return list(_allergens)
+
+
 def parse_recipe_page(recipe_url: str) -> dict:
     response = requests.get(recipe_url)
     response.raise_for_status()
     recipe_soup = BeautifulSoup(response.text, 'lxml')
+    ingredients = get_recipe_ingredients(recipe_soup)
     parsed_recipe = {
         'title': get_recipe_title(recipe_soup),
-        'ingredients': get_recipe_ingredients(recipe_soup),
+        'ingredients': ingredients,
         'instruction': get_recipe_instruction(recipe_soup),
         'portion_calories': get_portion_calories(recipe_soup),
         'images': get_images_urls(recipe_soup),
         'type': get_recipe_type(recipe_soup),
+        'allergens': get_allergens(ingredients),
     }
     if None in parsed_recipe.values():
         return None
@@ -176,10 +186,16 @@ def get_parsed_recipes(number: int) -> list:
     return parsed_recipes
 
 
-def save_recipes(number: int, filename: str='recipes.json'):
-    if not filename.endswith('.json'):
-        filename += '.json'
-    save_pretty_json(get_parsed_recipes(number), filename)
+def save_recipes(number: int):
+    file_path = os.path.join('frontend', 'recipes.json')
+    with open(file_path, 'w', encoding='utf8') as file:
+        file.write(
+            json.dumps(
+                get_parsed_recipes(number),
+                indent=4,
+                ensure_ascii=False
+            )
+        )
 
 
 def main():
