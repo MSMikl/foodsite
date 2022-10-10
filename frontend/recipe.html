@@ -19,7 +19,8 @@
                     <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <form>
-                    <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" formaction="{{ request.META.HTTP_REFERER }}">Назад</button>
+                    <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" formaction="
+                    {% if request.META.HTTP_REFERER %} {{ request.META.HTTP_REFERER }} {% else %} {% url 'index' %} {% endif %}">Назад</button>
                 </form>
             </div>
         </nav>
@@ -45,6 +46,8 @@
                                 <form action="{% url 'order' %}">
                                     <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit">Выбрать подписку</button>
                                 </form>
+                            {% elif error_recipes_finished %}
+                                <h2>{{error_recipes_finished}}</h2>
                             {% else %}
                             <h2>{{recipe.name}}</h2>
                             <div class="col-12 col-sm-6">
@@ -56,10 +59,10 @@
                                 <small class="link-secondary">Ингредиенты:</small>
                                 <ul class="list-group list-group-flush">
                                     {% for ingredient, amount in recipe.ingreds.items %}
-                                    <li class="list-group-item disabled"><small>{{ingredient}} ({{amount}}г.)</small></li>
+                                        <li class="list-group-item disabled"><small>{{ingredient}} {% if amount %} ({{amount}}) {% endif %}</small></li>
                                     {% endfor %}
                                 </ul>
-                                <small class="link-secondary">Общая калорийность: {{recipe.calories}} ккал</small>
+                                <small class="link-secondary">Калорийность одной порции: {{recipe.calories}} ккал</small>
                             </div>
                             {% endif %}
                         </div>

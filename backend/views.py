@@ -167,7 +167,7 @@ class RecipeView(View):
             return render(
                 request,
                 template_name='recipe.html',
-                context={'error': 'На сегодня лимит рецептов исчерпан'}
+                context={'error_recipes_finished': 'На сегодня лимит рецептов исчерпан'}
                 )
         calories_remain = order.calories / order.persons
         if recipes_shown_today['calories']:
