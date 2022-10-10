@@ -1,12 +1,12 @@
 import json
 from os.path import split
-from marshmallow import ValidationError
 from requests import get
 from django.core.management.base import BaseCommand
 from django.core.files.base import ContentFile
+from django.db import transaction
 
 from ._parsing import save_recipes
-from backend.models import Recipe
+from backend.models import Recipe, Allergy
 
 
 class Command(BaseCommand):
@@ -32,6 +32,28 @@ class Command(BaseCommand):
             self.style.SUCCESS(f'Successfully retrieved image from {url}')
         )
 
+    @transaction.atomic
+    def load_recipes_to_db(self, json_recipe, *args, **options):
+        recipe, created = Recipe.objects.get_or_create(
+            name=json_recipe['title'],
+            defaults={
+                'content': "\n".join(json_recipe['instruction']),
+                'calories': json_recipe['portion_calories'],
+                'ingredients': json.dumps(json_recipe['ingredients']),
+            },
+        )
+        if not created:
+            self.stdout.write(
+                self.style.WARNING(f"Already exists:{json_recipe['title']}")
+            )
+            return
+        for allergen_name in json_recipe['allergens']:
+            allergy, _ = Allergy.objects.get_or_create(
+                name=allergen_name,
+            )
+            recipe.allergies.add(allergy)
+        self.download_image(json_recipe['images'][0], recipe)
+
     def handle(self, *args, **options):
         if options['number']:
             if options['filename']:
@@ -44,17 +66,5 @@ class Command(BaseCommand):
         with open(options['fromjson'], encoding='utf8') as file:
             json_recipes = json.load(file)
         for json_recipe in json_recipes:
-            recipe, created = Recipe.objects.get_or_create(
-                name=json_recipe['title'],
-                defaults={
-                    'content': json_recipe['instruction'],
-                    'calories': json_recipe['portion_calories'],
-                    'ingredients': json.dumps(json_recipe['ingredients']),
-                },
-            )
-            if not created:
-                self.stdout.write(
-                    self.style.WARNING(f"Already exists:{json_recipe['title']}")
-                )
-                continue
-            self.download_image(json_recipe['images'][0], recipe)
+            self.load_recipes_to_db(json_recipe, *args, **options)
+

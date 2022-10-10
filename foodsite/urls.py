@@ -22,7 +22,7 @@ from django.urls import path
 
 from backend.views import (
     IndexView, AuthView, OrderView,
-    RegisterView, RecipeView, CabinetView
+    RegisterView, RecipeView, CabinetView, PaymentSuccessView,
 )
 
 
@@ -34,6 +34,7 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('recipe/', login_required(RecipeView.as_view()), name='recipe'),
     path('lk/', login_required(CabinetView.as_view()), name='lk'),
+    path('yookassa/', login_required(PaymentSuccessView.as_view()), name='yookassa'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
