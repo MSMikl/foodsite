@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Order, Type, Menu, Allergy, Recipe, RecipeShow
+from .models import User, Order, Type, Menu, Allergy, Recipe, RecipeShow, Referer
 
 
 @admin.register(User)
@@ -35,4 +35,8 @@ class AllergyAdmin(admin.ModelAdmin):
 
 @admin.register(RecipeShow)
 class RecipeShowAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Referer)
+class RefererAdmin(admin.ModelAdmin):
     pass
