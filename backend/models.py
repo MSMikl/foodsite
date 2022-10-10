@@ -177,3 +177,8 @@ class YookassaPayment(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments', verbose_name='Подписка')
     payment_id = models.CharField('Идентификатор', max_length=40, db_index=True)
     is_pending = models.BooleanField('Ожидает оплаты', default=True)
+
+
+class Referer(models.Model):
+    referer = models.TextField('Источник')
+    date = models.DateField('Дата показа', auto_now_add=True)

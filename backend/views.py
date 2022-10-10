@@ -9,12 +9,17 @@ from django.views.generic import TemplateView
 from django.utils import timezone
 from yookassa import Payment
 
-from backend.models import (Type, Allergy, User, Recipe, RecipeShow, Order,
-    YookassaPayment,)
+from backend.models import (
+    Type, Allergy, User, Recipe, RecipeShow, Order,
+    YookassaPayment, Referer,
+)
 
 
 class IndexView(View):
     def get(self, request, *args, **kwargs):
+        referer = request.META.get('HTTP_REFERER')
+        if referer:
+            Referer.objects.create(referer=referer)
         if request.GET.get('logout'):
             logout(request)
         return render(request, "index.html")
