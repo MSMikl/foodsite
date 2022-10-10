@@ -94,7 +94,7 @@ class Type(models.Model):
 
 class Recipe(models.Model):
     name = models.CharField('Название', max_length=150)
-    content = models.TextField('Состав')
+    content = models.TextField('Инструкция')
     ingredients = models.TextField(
         verbose_name='Ингредиенты',
         blank=True,

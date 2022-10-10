@@ -11,6 +11,7 @@ class UserAdmin(admin.ModelAdmin):
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ['name', 'image_tag', 'calories']
     readonly_fields = ['image_tag']
+    exclude = ['ingredients']
 
 
 @admin.register(Order)
