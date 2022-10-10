@@ -1,12 +1,12 @@
 import json
 from os.path import split
-from marshmallow import ValidationError
 from requests import get
 from django.core.management.base import BaseCommand
 from django.core.files.base import ContentFile
+from django.db import transaction
 
 from ._parsing import save_recipes
-from backend.models import Recipe
+from backend.models import Recipe, Allergy
 
 
 class Command(BaseCommand):
@@ -32,15 +32,8 @@ class Command(BaseCommand):
             self.style.SUCCESS(f'Successfully retrieved image from {url}')
         )
 
-    def handle(self, *args, **options):
-        if options['number']:
-            if options['filename']:
-                save_recipes(options['number'], options['filename'])
-            else:
-                save_recipes(options['number'])
-
-        if not options['fromjson']:
-            return
+    @transaction.atomic
+    def load_recipes_to_db(self, *args, **options):
         with open(options['fromjson'], encoding='utf8') as file:
             json_recipes = json.load(file)
         for json_recipe in json_recipes:
@@ -57,4 +50,21 @@ class Command(BaseCommand):
                     self.style.WARNING(f"Already exists:{json_recipe['title']}")
                 )
                 continue
+            for allergen_name in json_recipe['allergens']:
+                allergy, created = Allergy.objects.get_or_create(
+                    name=allergen_name,
+                )
+                recipe.allergies.add(allergy)
             self.download_image(json_recipe['images'][0], recipe)
+
+    def handle(self, *args, **options):
+        if options['number']:
+            if options['filename']:
+                save_recipes(options['number'], options['filename'])
+            else:
+                save_recipes(options['number'])
+
+        if not options['fromjson']:
+            return
+        self.load_recipes_to_db(self, *args, **options)
+
