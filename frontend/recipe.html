@@ -51,8 +51,8 @@
                             {% else %}
                             <h2>{{recipe.name}}</h2>
                             <div class="col-12 col-sm-6">
-                                <h6 style="white-space: pre-wrap">
-                                    {{recipe.content}}
+                                <h6>
+                                    {{recipe.content|linebreaks}}
                                 </h6>
                             </div>
                             <div class="col-12 col-sm-6">
