@@ -195,7 +195,7 @@ class RecipeView(View):
             shows__in=RecipeShow.objects.filter(user=request.user)
         )
         if recipe_never_shown:
-            recipe = recipe_never_shown.last()
+            recipe = recipe_never_shown.last().__dict__
         else:
             # ищем самый ранний по последнему показу
             recipe = recipes.prefetch_related('shows')\
