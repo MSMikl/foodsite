@@ -51,7 +51,7 @@ class Command(BaseCommand):
                 )
                 continue
             for allergen_name in json_recipe['allergens']:
-                allergy, created = Allergy.objects.get_or_create(
+                allergy, _ = Allergy.objects.get_or_create(
                     name=allergen_name,
                 )
                 recipe.allergies.add(allergy)

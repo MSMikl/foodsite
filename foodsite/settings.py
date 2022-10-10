@@ -151,6 +151,7 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', False)
 EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', False)
+DEFAULT_FROM_EMAIL = env('EMAIL_FROM', '')
 
 Configuration.account_id = env('YOOKASSA_SHOP_ID')
 Configuration.secret_key = env('YOOKASSA_SECRET_KEY')
