@@ -33,29 +33,26 @@ class Command(BaseCommand):
         )
 
     @transaction.atomic
-    def load_recipes_to_db(self, *args, **options):
-        with open(options['fromjson'], encoding='utf8') as file:
-            json_recipes = json.load(file)
-        for json_recipe in json_recipes:
-            recipe, created = Recipe.objects.get_or_create(
-                name=json_recipe['title'],
-                defaults={
-                    'content': "\n".join(json_recipe['instruction']),
-                    'calories': json_recipe['portion_calories'],
-                    'ingredients': json.dumps(json_recipe['ingredients']),
-                },
+    def load_recipes_to_db(self, json_recipe, *args, **options):
+        recipe, created = Recipe.objects.get_or_create(
+            name=json_recipe['title'],
+            defaults={
+                'content': "\n".join(json_recipe['instruction']),
+                'calories': json_recipe['portion_calories'],
+                'ingredients': json.dumps(json_recipe['ingredients']),
+            },
+        )
+        if not created:
+            self.stdout.write(
+                self.style.WARNING(f"Already exists:{json_recipe['title']}")
             )
-            if not created:
-                self.stdout.write(
-                    self.style.WARNING(f"Already exists:{json_recipe['title']}")
-                )
-                continue
-            for allergen_name in json_recipe['allergens']:
-                allergy, _ = Allergy.objects.get_or_create(
-                    name=allergen_name,
-                )
-                recipe.allergies.add(allergy)
-            self.download_image(json_recipe['images'][0], recipe)
+            return
+        for allergen_name in json_recipe['allergens']:
+            allergy, _ = Allergy.objects.get_or_create(
+                name=allergen_name,
+            )
+            recipe.allergies.add(allergy)
+        self.download_image(json_recipe['images'][0], recipe)
 
     def handle(self, *args, **options):
         if options['number']:
@@ -66,5 +63,8 @@ class Command(BaseCommand):
 
         if not options['fromjson']:
             return
-        self.load_recipes_to_db(self, *args, **options)
+        with open(options['fromjson'], encoding='utf8') as file:
+            json_recipes = json.load(file)
+        for json_recipe in json_recipes:
+            self.load_recipes_to_db(json_recipe, *args, **options)
 
