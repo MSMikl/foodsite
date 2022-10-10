@@ -5,6 +5,8 @@ import random
 
 import requests
 from bs4 import BeautifulSoup
+from typing import Dict
+from django.conf import settings
 
 
 def check_for_page_redirect(response: requests.Response, page):
@@ -115,7 +117,7 @@ def get_recipe_type(recipe_soup: BeautifulSoup) -> list:
     return recipe_type
 
 
-def get_allergens(ingredients: dict[str, str]) -> set:
+def get_allergens(ingredients: Dict[str, str]) -> list:
     if not ingredients:
         return []
     allergens = {
@@ -186,8 +188,8 @@ def get_parsed_recipes(number: int) -> list:
     return parsed_recipes
 
 
-def save_recipes(number: int):
-    file_path = os.path.join('frontend', 'recipes.json')
+def save_recipes(number: int, filename='recipes.json'):
+    file_path = os.path.join(settings.STATIC_ROOT, filename)
     with open(file_path, 'w', encoding='utf8') as file:
         file.write(
             json.dumps(
