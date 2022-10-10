@@ -2,7 +2,7 @@
 {% block head %}
     <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{% url 'index' %}">
                 <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse1"
@@ -11,24 +11,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse1">
                 <ul class="navbar-nav w-100">
-                    <li class="nav-item nav-item__border">
-                        <a class="nav-link active" aria-current="page" href="#">Виды меню</a>
-                    </li>
-                    <li class="nav-item nav-item__border">
-                        <a class="nav-link active" aria-current="page" href="#">Отзывы</a>
-                    </li>
-                    <li class="nav-item nav-item__border">
-                        <a class="nav-link active" aria-current="page" href="#">FAQ</a>
-                    </li>
-                    <li class="nav-item nav-item__border">
-                        <a class="nav-link active" aria-current="page" href="#">Контакты</a>
-                    </li>
                     <li class="nav-item align-items-center d-md-flex flex-grow-1 justify-content-end">
-                        <button class="btn btn-outline-success me-2 foodplan_green foodplan__border_green">Подписка</button>
+
                         {% if user.name %}
                             <h3>Здравствуйте, {{user.name}}</h3>
                         {% else %}
-                            <button href="{% url 'auth' %}" class="btn btn-outline-success foodplan_green foodplan__border_green">Войти</button>
+                            <form action="{% url 'auth' %}">
+                                <button class="btn btn-outline-success foodplan_green foodplan__border_green" name="next" value="index">Войти</button>
+                            </form>
                         {% endif %}
                     </li>
                 </ul>

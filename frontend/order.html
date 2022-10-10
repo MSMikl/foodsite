@@ -15,11 +15,10 @@
     <header>
         <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="{% url 'index' %}">
                     <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <h3 class="text-secondary mt-2 me-2 total" value="0">Стоимость: 00000₽</h3>
-                <button type="submit" id="btnContinue" class="btn btn-sm btn-outline-success foodplan_green foodplan__border_green">Оплатить</button>
             </div>
         </nav>
     </header>
@@ -49,7 +48,7 @@
                         <tr>
                             <th scope="row" class="text-start">Срок</th>
                             <td>
-                                <select name="length" class="form-select">
+                                <select name="length" class="form-select" onchange="update()">
                                     <option value="3" selected>3 мес.</option>
                                     <option value="12">12 мес.</option>
                                 </select>
@@ -100,7 +99,7 @@
                 </table>
                 <input type="hidden" name="price" value="0"/>
                 {% csrf_token %}
-                <button type="submit" id="TableSubmit" class="btn btn-outline-success foodplan_green foodplan__border_green w-50" formaction="{% url 'order' %}" formmethod="post">Продолжить</button>
+                <button type="submit" id="TableSubmit" class="btn btn-outline-success foodplan_green foodplan__border_green w-50 centered" formaction="{% url 'order' %}" formmethod="post">Продолжить </button>
                 </form>
             </div>
         </section>
@@ -112,8 +111,9 @@
         function update() {
             var running_total = 0;
             let elements = document.querySelectorAll('.selecttype');
+            var coef = parseInt(document.querySelector('select[name=length]').value)/3;
             for (let el of elements) {
-                running_total += parseInt(el.value);
+                running_total += (parseInt(el.value) * coef);
             };
             document.querySelector('.total').textContent = "Стоимость " + running_total + " ₽";
             document.querySelector('input[name=price]').value = running_total;

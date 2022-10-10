@@ -29,12 +29,10 @@ class AuthView(View):
         })
 
     def post(self, request):
-        print(request.POST)
         email = request.POST['email']
         password = request.POST['password']
         next = request.POST.get('next', 'lk')
         user = authenticate(request, email=email, password=password)
-        print(user)
         if user:
             login(request, user)
             return redirect(next)
@@ -70,7 +68,7 @@ class OrderView(View):
             'title': type.name,
             'price': type.price
         } for type in Type.objects.all()]
-        print(types)
+
         allergies = [{
             'title': allergy.name,
             'id': allergy.id,
@@ -82,8 +80,6 @@ class OrderView(View):
 
     def post(self, request):
         payment_id, payment_url = self.create_payment(request.POST.get('price'))
-        print(request.POST)
-        print(request.user)
         order = Order(
             user=request.user,
             persons=request.POST.get('persons'),
@@ -98,7 +94,6 @@ class OrderView(View):
         for allergy in Allergy.objects.all():
             if request.POST.get(allergy.name):
                 order.allergies.add(allergy)
-        print(order)
         YookassaPayment.objects.create(order=order, payment_id=payment_id)
         return redirect(payment_url)
 
@@ -119,7 +114,6 @@ class RegisterView(View):
         if user:
             login(request, user)
             return redirect('/lk/')
-        print(user)
         return redirect('/')
 
 
@@ -138,7 +132,7 @@ class RecipeView(View):
                 }
             else:
                 context = {
-                    'error': 'Вы еще не получали рецепты. Начните прямо сейчас!'
+                    'error_first_recipe': 'Вы еще не получали рецепты. Начните прямо сейчас!'
                 }
             return render(
                 request,
@@ -156,7 +150,7 @@ class RecipeView(View):
         if not order:
             return render(request,
                           template_name='recipe.html',
-                          context={'error': 'Нет активных подписок'})
+                          context={'error_no_subscribes': 'Нет активных подписок'})
         eat_times = order.types.count()
 
         # проверяем лимит рецептов
@@ -170,7 +164,6 @@ class RecipeView(View):
                 template_name='recipe.html',
                 context={'error': 'На сегодня лимит рецептов исчерпан'}
                 )
-        print(recipes_shown_today['calories'])
         calories_remain = order.calories / order.persons
         if recipes_shown_today['calories']:
             calories_remain -= recipes_shown_today['calories']
@@ -198,7 +191,6 @@ class RecipeView(View):
         )
         if recipe_never_shown:
             recipe = recipe_never_shown.last()
-            print('never', recipe)
         else:
             # ищем самый ранний по последнему показу
             recipe = recipes.prefetch_related('shows')\

@@ -47,7 +47,7 @@ class Command(BaseCommand):
             recipe, created = Recipe.objects.get_or_create(
                 name=json_recipe['title'],
                 defaults={
-                    'content': json_recipe['instruction'],
+                    'content': "\n".join(json_recipe['instruction']),
                     'calories': json_recipe['portion_calories'],
                     'ingredients': json.dumps(json_recipe['ingredients']),
                 },

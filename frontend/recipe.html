@@ -15,7 +15,7 @@
     <header>
         <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href=href="{% url 'index' %}">
                     <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <form>
@@ -35,12 +35,22 @@
                     </div>
                     <div class="col-12 col-md-8 d-flex flex-column justify-content-between">
                         <div class="row">
-                            {% if error %}
-                                <h2>{{error}}</h2>
+                            {% if error_first_recipe %}
+                                <h2>{{error_first_recipe}}</h2>
+                                <form action="{% url 'recipe' %}">
+                                    <button class="btn btn-outline-success foodplan_green foodplan__border_green" name="getnew" value="True">Получить новый рецепт</button>
+                                </form>
+                            {% elif error_no_subscribes %}
+                                <h2>{{error_no_subscribes}}</h2>
+                                <form action="{% url 'order' %}">
+                                    <button class="btn btn-outline-success foodplan_green foodplan__border_green" type="submit">Выбрать подписку</button>
+                                </form>
                             {% else %}
                             <h2>{{recipe.name}}</h2>
                             <div class="col-12 col-sm-6">
-                                <h6>{{recipe.content}}</h6>
+                                <h6 style="white-space: pre-wrap">
+                                    {{recipe.content}}
+                                </h6>
                             </div>
                             <div class="col-12 col-sm-6">
                                 <small class="link-secondary">Ингредиенты:</small>

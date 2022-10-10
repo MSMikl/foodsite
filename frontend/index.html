@@ -14,20 +14,20 @@
     <header>
         <nav class="navbar navbar-light fixed-top navbar__opacity">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="{% url 'index' %}">
                     <img src="{% static 'img/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 {% if user.name %}
                     <h4>Здравствуйте, {{user.name}}</h4>
                     <form action="{% url 'lk' %}">
-                        <button class="btn btn-outline-success foodplan_green foodplan__border_green" name="logout" value="True">Личный кабинет</button>
+                        <button class="btn btn-outline-success foodplan_green foodplan__border_green">Личный кабинет</button>
                     </form>
                     <form action="{% url 'index' %}">
                         <button class="btn btn-outline-success foodplan_green foodplan__border_green" name="logout" value="True">Выйти</button>
                     </form>
                 {% else %}
                     <form action="{% url 'auth' %}">
-                        <button class="btn btn-outline-success foodplan_green foodplan__border_green" name="next", value="index">Войти</button>
+                        <button class="btn btn-outline-success foodplan_green foodplan__border_green" name="next" value="index">Войти</button>
                     </form>
                 {% endif %}
             </div>
