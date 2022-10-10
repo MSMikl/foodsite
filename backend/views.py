@@ -205,7 +205,7 @@ class RecipeView(View):
                 .order_by('last_show')\
                 .first()
 
-        RecipeShow.objects.create(recipe_id=recipe.id, user=request.user)
+        RecipeShow.objects.create(recipe_id=recipe['id'], user=request.user)
         return render(
             request,
             template_name='recipe.html',
